@@ -1841,6 +1841,25 @@ export class PokemonSprite extends Sprite {
 		watersport: ['Water Sport', 'good'],
 		mudsport: ['Mud Sport', 'good'],
 		substitute: null,
+		
+		//Roovnen Stuff
+		weaponryatk: ['Weaponry: Atk', 'good'],
+		weaponrydef: ['Weaponry: Def', 'good'],
+		weaponryspa: ['Weaponry: SpA', 'good'],
+		weaponryspd: ['Weaponry: SpD', 'good'],
+		weaponryspe: ['Weaponry: Spe', 'good'],
+		bonecrush: ['Bone Crush', 'bad'],
+		prepareattack: ['Prepare Attack', 'good'],
+		preparechallenge: ['Prepare Challenge', 'good'],
+		preparedefense: ['Prepare Defense', 'good'],
+		curingrocks: ['Curing Rocks', 'good'],
+		happymeal: ['Happy Meal', 'good'],
+		dashhappy: ['Dash Happy', 'good'],
+		shielded: ['Shielded', 'good'],
+		mountainbreeze: ['Mountain Breeze', 'bad'],
+		exoskeleton: ['Exoskeleton', 'good'],
+		boxtechnique: ['Box Technique', 'neutral'],
+		
 		// sub graphics are handled elsewhere, see Battle.Sprite.animSub()
 		uproar: ['Uproar', 'neutral'],
 		rage: ['Rage', 'neutral'],

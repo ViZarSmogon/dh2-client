@@ -442,6 +442,7 @@ License: GPLv2
 	color: #554433;
 }
 .snowweather,
+.heavyblizzardsweather,
 .hailweather {
 	background: #AADDEE url(../fx/weather-hail.png) no-repeat scroll left top;
 	color: #114455;
