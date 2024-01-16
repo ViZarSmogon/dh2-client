@@ -1886,6 +1886,12 @@ export class PokemonSprite extends Sprite {
 		// Gen 1
 		lightscreen: ['Light Screen', 'good'],
 		reflect: ['Reflect', 'good'],
+		
+		dragonsmightatk: ['Dragon\'s Might: Atk', 'good'],
+		dragonsmightdef: ['Dragon\'s Might: Def', 'good'],
+		dragonsmightspa: ['Dragon\'s Might: SpA', 'good'],
+		dragonsmightspd: ['Dragon\'s Might: SpD', 'good'],
+		dragonsmightspe: ['Dragon\'s Might: Spe', 'good'],
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;

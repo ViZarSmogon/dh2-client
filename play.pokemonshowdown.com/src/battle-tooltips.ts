@@ -1024,7 +1024,7 @@ class BattleTooltips {
 			if (this.battle.gen > 2 && ability === 'quickfeet') {
 				stats.spe = Math.floor(stats.spe * 1.5);
 			} else if (pokemon.status === 'par') {
-				if (this.battle.gen > 6) {
+				if (this.battle.gen >= 7) {
 					stats.spe = Math.floor(stats.spe * 0.5);
 				} else {
 					stats.spe = Math.floor(stats.spe * 0.25);
@@ -1160,7 +1160,7 @@ class BattleTooltips {
 				speedModifiers.push(2);
 			}
 			for (const statName of Dex.statNamesExceptHP) {
-				if (clientPokemon.volatiles['protosynthesis' + statName] || clientPokemon.volatiles['quarkdrive' + statName]) {
+				if (clientPokemon.volatiles['protosynthesis' + statName] || clientPokemon.volatiles['quarkdrive' + statName] || clientPokemon.volatiles['dragonsmight' + statName]) {
 					if (statName === 'spe') {
 						speedModifiers.push(1.5);
 					} else {
@@ -1179,12 +1179,15 @@ class BattleTooltips {
 					// Pokemon with Hisui evolutions
 					evoSpecies.isNonstandard === "Unobtainable";
 		});
-		if (item === 'eviolite' && (isNFE || this.battle.dex.species.get(serverPokemon.speciesForme).id === 'dipplin')) {
+		if (item === 'eviolite' && (isNFE || this.battle.dex.species.get(serverPokemon.speciesForme).id === 'alomomola' || 
+			this.battle.dex.species.get(serverPokemon.speciesForme).id === 'falinks' || 
+			this.battle.dex.species.get(serverPokemon.speciesForme).id === 'honchcrow' || 
+			this.battle.dex.species.get(serverPokemon.speciesForme).id === 'camerupt')) {
 			stats.def = Math.floor(stats.def * 1.5);
 			stats.spd = Math.floor(stats.spd * 1.5);
 		}
 		if (ability === 'grasspelt' && this.battle.hasPseudoWeather('Grassy Terrain')) {
-			stats.def = Math.floor(stats.def * 1.5);
+			stats.def = Math.floor(stats.def * 1.3333);
 		}
 		if (this.battle.hasPseudoWeather('Electric Terrain')) {
 			if (ability === 'surgesurfer') {
@@ -1235,22 +1238,22 @@ class BattleTooltips {
 		}
 		if (this.battle.abilityActive('Vessel of Ruin')) {
 			if (ability !== 'vesselofruin') {
-				stats.spa = Math.floor(stats.spa * 0.75);
+				stats.spa = Math.floor(stats.spa * 0.9);
 			}
 		}
 		if (this.battle.abilityActive('Sword of Ruin')) {
 			if (ability !== 'swordofruin') {
-				stats.def = Math.floor(stats.def * 0.75);
+				stats.def = Math.floor(stats.def * 0.9);
 			}
 		}
 		if (this.battle.abilityActive('Tablets of Ruin')) {
 			if (ability !== 'tabletsofruin') {
-				stats.atk = Math.floor(stats.atk * 0.75);
+				stats.atk = Math.floor(stats.atk * 0.9);
 			}
 		}
 		if (this.battle.abilityActive('Beads of Ruin')) {
 			if (ability !== 'beadsofruin') {
-				stats.spd = Math.floor(stats.spd * 0.75);
+				stats.spd = Math.floor(stats.spd * 0.9);
 			}
 		}
 		const sideConditions = this.battle.mySide.sideConditions;
@@ -1466,7 +1469,7 @@ class BattleTooltips {
 		if (move.id === 'terablast' && pokemon.terastallized) {
 			moveType = pokemon.terastallized as TypeName;
 		}
-		if (move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Stellar') {
+		if (move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Terastal') {
 			moveType = 'Stellar';
 		}
 
@@ -1555,6 +1558,9 @@ class BattleTooltips {
 		if (move.id === 'toxic' && this.battle.gen >= 6 && this.pokemonHasType(pokemon, 'Poison')) {
 			value.set(0, "Poison type");
 			return value;
+		}
+		if (move.id === 'toxic') {
+			value.abilityModify(0, 'Gooey');
 		}
 		if (move.id === 'blizzard' && this.battle.gen >= 4) {
 			value.weatherModify(0, 'Hail');
@@ -1785,6 +1791,11 @@ class BattleTooltips {
 		) {
 			value.set(20, 'Battle Bond');
 		}
+		if (
+			move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Terastal'
+		) {
+			value.set(180, 'Terapagos-Terastal');
+		}
 		// Moves that check opponent speed
 		if (move.id === 'electroball' && target) {
 			let [minSpe, maxSpe] = this.getSpeedRange(target);
@@ -1896,7 +1907,7 @@ class BattleTooltips {
 			value.abilityModify(1.3, "Punk Rock");
 		}
 		if (move.flags['slicing']) {
-			value.abilityModify(1.5, "Sharpness");
+			value.abilityModify(1.3, "Sharpness");
 		}
 		for (let i = 1; i <= 5 && i <= pokemon.side.faintCounter; i++) {
 			if (pokemon.volatiles[`fallen${i}`]) {
@@ -1930,6 +1941,15 @@ class BattleTooltips {
 		}
 		if (move.recoil || move.hasCrashDamage) {
 			value.abilityModify(1.2, 'Reckless');
+		}
+		if (move.type === 'Poison') {
+			value.abilityModify(1.3, 'Gooey');
+		}
+		if (move.type === 'Dragon' || move.type === 'Ice' || move.type === 'Fire' || move.type === 'Electric') {
+			value.abilityModify(2, 'Dragon\'s Might');
+		}
+		if (pokemon.getSpeciesForme() === 'Terapagos-Terastal' && pokemon.hp >= pokemon.maxhp) {
+			value.abilityModify(1.5, 'Tera Shell');
 		}
 
 		if (move.category !== 'Status') {
@@ -2099,6 +2119,12 @@ class BattleTooltips {
 			value.itemModify(1.2);
 			return value;
 		}
+		
+		//Memory
+		if (item.onMemory === moveType && !item.zMove) {
+			value.itemModify(1.2);
+			return value;
+		}
 
 		// Incenses
 		if (BattleTooltips.incenseTypes[item.name] === moveType) {
@@ -2141,10 +2167,11 @@ class BattleTooltips {
 
 		if (itemName === 'Muscle Band' && move.category === 'Physical' ||
 			itemName === 'Wise Glasses' && move.category === 'Special' ||
-			itemName === 'Punching Glove' && move.flags['punch']) {
+			itemName === 'Punching Glove' && move.flags['punch'] ||
+			itemName === 'Loaded Dice' && move.multihit) {
 			value.itemModify(1.1);
 		}
-
+		
 		return value;
 	}
 	getPokemonTypes(pokemon: Pokemon | ServerPokemon, preterastallized = false): ReadonlyArray<TypeName> {
