@@ -1235,6 +1235,120 @@ export class BattleScene implements BattleSceneStub {
 			this.$spritesFront[spriteIndex].append(rock4.$el!);
 			this.sideConditions[siden][id] = [rock1, rock2, rock3, rock4];
 			break;
+		case 'firepledge':
+			const coal1 = new Sprite(BattleEffects.fireball, {
+				display: 'block',
+				x: x + side.leftof(-40),
+				y: y - 10,
+				z: side.z,
+				xscale: 0.7,
+				yscale: 0.7,
+				opacity: 0.5,
+				scale: 0.2,
+			}, this);
+
+			const coal2 = new Sprite(BattleEffects.fireball, {
+				display: 'block',
+				x: x + side.leftof(-20),
+				y: y - 40,
+				z: side.z,
+				xscale: 0.7,
+				yscale: 0.7,
+				opacity: 0.5,
+				scale: 0.2,
+			}, this);
+
+			const coal3 = new Sprite(BattleEffects.fireball, {
+				display: 'block',
+				x: x + side.leftof(30),
+				y: y - 20,
+				z: side.z,
+				xscale: 0.7,
+				yscale: 0.7,
+				opacity: 0.5,
+				scale: 0.2,
+			}, this);
+
+			const coal4 = new Sprite(BattleEffects.fireball, {
+				display: 'block',
+				x: x + side.leftof(10),
+				y: y - 30,
+				z: side.z,
+				xscale: 0.7,
+				yscale: 0.7,
+				opacity: 0.5,
+				scale: 0.2,
+			}, this);
+
+			this.$spritesFront[spriteIndex].append(coal1.$el!);
+			this.$spritesFront[spriteIndex].append(coal2.$el!);
+			this.$spritesFront[spriteIndex].append(coal3.$el!);
+			this.$spritesFront[spriteIndex].append(coal4.$el!);
+			this.sideConditions[siden][id] = [coal1, coal2, coal3, coal4];
+			break;
+		case 'grasspledge':
+			const mud1 = new Sprite(BattleEffects.rocks, {
+				display: 'block',
+				x: x + side.leftof(-40),
+				y: y - 10,
+				z: side.z,
+				opacity: 0.4,
+				scale: 0.7,
+			}, this);
+
+			const mud2 = new Sprite(BattleEffects.rocks, {
+				display: 'block',
+				x: x + side.leftof(-20),
+				y: y - 40,
+				z: side.z,
+				opacity: 0.4,
+				scale: 0.7,
+			}, this);
+
+			const mud3 = new Sprite(BattleEffects.rocks, {
+				display: 'block',
+				x: x + side.leftof(30),
+				y: y - 20,
+				z: side.z,
+				opacity: 0.4,
+				scale: 0.7,
+			}, this);
+
+			const mud4 = new Sprite(BattleEffects.rocks, {
+				display: 'block',
+				x: x + side.leftof(10),
+				y: y - 30,
+				z: side.z,
+				opacity: 0.4,
+				scale: 0.7,
+			}, this);
+
+			this.$spritesFront[spriteIndex].append(mud1.$el!);
+			this.$spritesFront[spriteIndex].append(mud2.$el!);
+			this.$spritesFront[spriteIndex].append(mud3.$el!);
+			this.$spritesFront[spriteIndex].append(mud4.$el!);
+			this.sideConditions[siden][id] = [mud1, mud2, mud3, mud4];
+			break;
+		case 'waterpledge':
+			const rainbow1 = new Sprite(BattleEffects.rainbow, {
+				display: 'block',
+				x,
+				y,
+				z: side.behind(-27),
+				xscale: 1,
+				yscale: 0,
+				opacity: 0.1,
+			}, this);
+			this.$spritesFront[spriteIndex].append(rainbow1.$el!);
+			this.sideConditions[siden][id] = [rainbow1];
+			rainbow1.anim({
+				opacity: 0.7,
+				time: instant ? 0 : 400,
+			}).anim({
+				opacity: 0.3,
+				time: instant ? 0 : 300,
+			});
+			break;
 		case 'gmaxsteelsurge':
 			const surge1 = new Sprite(BattleEffects.greenmetal1, {
 				display: 'block',
@@ -1887,11 +2001,16 @@ export class PokemonSprite extends Sprite {
 		lightscreen: ['Light Screen', 'good'],
 		reflect: ['Reflect', 'good'],
 		
-		dragonsmightatk: ['Dragon\'s Might: Atk', 'good'],
-		dragonsmightdef: ['Dragon\'s Might: Def', 'good'],
-		dragonsmightspa: ['Dragon\'s Might: SpA', 'good'],
-		dragonsmightspd: ['Dragon\'s Might: SpD', 'good'],
-		dragonsmightspe: ['Dragon\'s Might: Spe', 'good'],
+		dragonmightatk: ['Dragon Might: Atk', 'good'],
+		dragonmightdef: ['Dragon Might: Def', 'good'],
+		dragonmightspa: ['Dragon Might: SpA', 'good'],
+		dragonmightspd: ['Dragon Might: SpD', 'good'],
+		dragonmightspe: ['Dragon Might: Spe', 'good'],
+		weaponryatk: ['Weaponry: Atk', 'good'],
+		weaponrydef: ['Weaponry: Def', 'good'],
+		weaponryspa: ['Weaponry: SpA', 'good'],
+		weaponryspd: ['Weaponry: SpD', 'good'],
+		weaponryspe: ['Weaponry: Spe', 'good'],
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;

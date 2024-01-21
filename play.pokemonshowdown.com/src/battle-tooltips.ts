@@ -757,7 +757,7 @@ class BattleTooltips {
 				text += `<p class="movetag">&#x2713; Slicing <small>(boosted by Sharpness)</small></p>`;
 			}
 			if (move.flags.wind) {
-				text += `<p class="movetag">&#x2713; Wind <small>(activates Wind Power and Wind Rider)</small></p>`;
+				text += `<p class="movetag">&#x2713; Wind <small>(activates Wind Power and Wind Rider & boosted by Thunderstorm)</small></p>`;
 			}
 		}
 		return text;
@@ -1160,12 +1160,19 @@ class BattleTooltips {
 				speedModifiers.push(2);
 			}
 			for (const statName of Dex.statNamesExceptHP) {
-				if (clientPokemon.volatiles['protosynthesis' + statName] || clientPokemon.volatiles['quarkdrive' + statName] || clientPokemon.volatiles['dragonsmight' + statName]) {
+				if (clientPokemon.volatiles['protosynthesis' + statName] || clientPokemon.volatiles['quarkdrive' + statName] || clientPokemon.volatiles['dragonmight' + statName]) {
 					if (statName === 'spe') {
 						speedModifiers.push(1.5);
 					} else {
 						stats[statName] = Math.floor(stats[statName] * 1.3);
 					}
+				}
+				if (clientPokemon.volatiles['weaponry' + statName]) {
+					if (statName === 'spe') {
+							speedModifiers.push(1.5);
+						} else {
+							stats[statName] = Math.floor(stats[statName] * 1.5);
+						}
 				}
 			}
 		}
@@ -1469,7 +1476,7 @@ class BattleTooltips {
 		if (move.id === 'terablast' && pokemon.terastallized) {
 			moveType = pokemon.terastallized as TypeName;
 		}
-		if (move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Terastal') {
+		if (move.id === 'terastarstorm' && (pokemon.getSpeciesForme() === 'Terapagos-Terastal' || pokemon.getSpeciesForme() === 'Terapagos-Stellar')) {
 			moveType = 'Stellar';
 		}
 
@@ -1792,9 +1799,9 @@ class BattleTooltips {
 			value.set(20, 'Battle Bond');
 		}
 		if (
-			move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Terastal'
+			move.id === 'terastarstorm' && (pokemon.getSpeciesForme() === 'Terapagos-Terastal' || pokemon.getSpeciesForme() === 'Terapagos-Stellar')
 		) {
-			value.set(180, 'Terapagos-Terastal');
+			value.set(180, 'Terapagos');
 		}
 		// Moves that check opponent speed
 		if (move.id === 'electroball' && target) {
@@ -1903,11 +1910,17 @@ class BattleTooltips {
 		if (move.flags['contact']) {
 			value.abilityModify(1.3, "Tough Claws");
 		}
+		if (this.battle.tier.includes("New Region")) {
+			value.abilityModify(1.1, "Long Reach");
+		}
 		if (move.flags['sound']) {
 			value.abilityModify(1.3, "Punk Rock");
 		}
 		if (move.flags['slicing']) {
 			value.abilityModify(1.3, "Sharpness");
+		}
+		if (move.flags['wind'] && this.battle.tier.includes("New Region")) {
+			value.abilityModify(2, "Thunderstorm");
 		}
 		for (let i = 1; i <= 5 && i <= pokemon.side.faintCounter; i++) {
 			if (pokemon.volatiles[`fallen${i}`]) {
@@ -1942,11 +1955,11 @@ class BattleTooltips {
 		if (move.recoil || move.hasCrashDamage) {
 			value.abilityModify(1.2, 'Reckless');
 		}
-		if (move.type === 'Poison') {
+		if (this.battle.tier.includes("New Region") && move.type === 'Poison') {
 			value.abilityModify(1.3, 'Gooey');
 		}
-		if (move.type === 'Dragon' || move.type === 'Ice' || move.type === 'Fire' || move.type === 'Electric') {
-			value.abilityModify(2, 'Dragon\'s Might');
+		if ((move.type === 'Dragon' || move.type === 'Ice' || move.type === 'Fire' || move.type === 'Electric') && this.battle.tier.includes("New Region")) {
+			value.abilityModify(2, 'Dragon Might');
 		}
 		if (pokemon.getSpeciesForme() === 'Terapagos-Terastal' && pokemon.hp >= pokemon.maxhp) {
 			value.abilityModify(1.5, 'Tera Shell');
@@ -2087,6 +2100,7 @@ class BattleTooltips {
 		'Palkia': ['Lustrous Globe', 'Lustrous Orb'],
 		'Giratina': ['Griseous Core', 'Griseous Orb'],
 		'Venomicon': ['Vile Vial'],
+		'Genesect' : ['Burn Drive', 'Chill Drive', 'Douse Drive', 'Shock Drive'],
 	};
 	static orbTypes: {[itemName: string]: TypeName[]} = {
 		'Soul Dew': ['Psychic', 'Dragon'],
@@ -2097,6 +2111,10 @@ class BattleTooltips {
 		'Griseous Core': ['Ghost', 'Dragon'],
 		'Griseous Orb': ['Ghost', 'Dragon'],
 		'Vile Vial': ['Poison', 'Flying'],
+		'Burn Drive': ['Bug', 'Steel', 'Fire'],
+		'Chill Drive': ['Bug', 'Steel', 'Ice'],
+		'Douse Drive': ['Bug', 'Steel', 'Water'],
+		'Shock Drive': ['Bug', 'Steel', 'Electric'],
 	};
 	static noGemMoves = [
 		'Fire Pledge',
