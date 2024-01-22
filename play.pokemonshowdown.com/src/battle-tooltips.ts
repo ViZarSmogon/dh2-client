@@ -1961,9 +1961,6 @@ class BattleTooltips {
 		if ((move.type === 'Dragon' || move.type === 'Ice' || move.type === 'Fire' || move.type === 'Electric') && this.battle.tier.includes("New Region")) {
 			value.abilityModify(2, 'Dragon Might');
 		}
-		if (pokemon.getSpeciesForme() === 'Terapagos-Terastal' && pokemon.hp >= pokemon.maxhp) {
-			value.abilityModify(1.5, 'Tera Shell');
-		}
 
 		if (move.category !== 'Status') {
 			let auraBoosted = '';
