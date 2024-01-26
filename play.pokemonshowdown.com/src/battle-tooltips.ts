@@ -50,7 +50,7 @@ class ModifiableValue {
 		const ignoreKlutz = [
 			"Macho Brace", "Power Anklet", "Power Band", "Power Belt", "Power Bracer", "Power Lens", "Power Weight",
 		];
-		if (this.tryAbility('Klutz') && !ignoreKlutz.includes(itemName)) {
+		if (this.tryAbility('Klutz') && !ignoreKlutz.includes(itemName) && !this.battle.tier.includes("New Region")) {
 			this.comment.push(` (${itemName} suppressed by Klutz)`);
 			return false;
 		}
@@ -1249,13 +1249,40 @@ class BattleTooltips {
 		if (item === 'assaultvest') {
 			stats.spd = Math.floor(stats.spd * 1.5);
 		}
+		if (this.battle.tier.includes("New Region")) {
+			if (item === 'powerband') {
+				const reducedSpe = Math.floor(stats.spe * 0.33);
+				stats.spd = stats.spd + reducedSpe;
+			}
+			if (item === 'powerbelt') {
+				const reducedSpe = Math.floor(stats.spe * 0.33);
+				stats.atk = stats.atk + reducedSpe;
+			}
+			if (item === 'powerbracer') {
+				const reducedSpe = Math.floor(stats.spe * 0.33);
+				stats.def = stats.def + reducedSpe;
+			}
+			if (item === 'powerlens') {
+				const reducedSpe = Math.floor(stats.spe * 0.33);
+				stats.spa = stats.spa + reducedSpe;
+			}
+		}
 		if (item === 'deepseascale' && species === 'Clamperl') {
 			stats.spd *= 2;
 		}
 		if (item === 'choicescarf' && !clientPokemon?.volatiles['dynamax']) {
 			speedModifiers.push(1.5);
 		}
-		if (item === 'ironball' || speedHalvingEVItems.includes(item)) {
+		if (item === 'ironball' || (speedHalvingEVItems.includes(item) && !this.battle.tier.includes("New Region"))) {
+			speedModifiers.push(0.5);
+		}
+		if (['powerband', 'powerbelt', 'powerbracer', 'powerlens', 'powerweight'].includes(item) && this.battle.tier.includes("New Region")) {
+			speedModifiers.push(0.67);
+		}
+		if (item === 'poweranklet' && this.battle.tier.includes("New Region")) {
+			speedModifiers.push(1.5);
+		}
+		if (item === 'machobrace' && this.battle.tier.includes("New Region")) {
 			speedModifiers.push(0.5);
 		}
 		if (ability === 'furcoat') {
@@ -1964,7 +1991,11 @@ class BattleTooltips {
 		}
 		for (let i = 1; i <= 5 && i <= pokemon.side.faintCounter; i++) {
 			if (pokemon.volatiles[`fallen${i}`]) {
-				value.abilityModify(1 + 0.1 * i, "Supreme Overlord");
+				if (this.battle.tier.includes("New Region")) {
+					value.abilityModify(1 + 0.05 * i, "Supreme Overlord");
+				} else {
+					value.abilityModify(1 + 0.1 * i, "Supreme Overlord");
+				}
 			}
 		}
 		if (target) {
@@ -2232,7 +2263,12 @@ class BattleTooltips {
 		if (this.battle.tier.includes("New Region") && itemName === 'Loaded Dice' && move.multihit) {
 			value.itemModify(1.1);
 		}
-
+		if (this.battle.tier.includes("New Region") && itemName === 'Power Anklet') {
+			value.itemModify(0.8);
+		}
+		if (this.battle.tier.includes("New Region") && itemName === 'Macho Brace') {
+			value.itemModify(1.3);
+		}
 		return value;
 	}
 	getPokemonTypes(pokemon: Pokemon | ServerPokemon, preterastallized = false): ReadonlyArray<TypeName> {

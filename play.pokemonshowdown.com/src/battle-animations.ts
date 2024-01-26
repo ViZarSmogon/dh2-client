@@ -2011,6 +2011,7 @@ export class PokemonSprite extends Sprite {
 		weaponryspa: ['Weaponry: SpA', 'good'],
 		weaponryspd: ['Weaponry: SpD', 'good'],
 		weaponryspe: ['Weaponry: Spe', 'good'],
+		obey: ['Obey', 'bad'],
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;
