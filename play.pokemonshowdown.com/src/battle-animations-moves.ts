@@ -12,6 +12,103 @@
 import {AnimTable, BattleOtherAnims} from './battle-animations';
 
 export const BattleMoveAnims: AnimTable = {
+	//New Region
+	obey: {
+		anim(scene, [attacker, defender]) {
+			BattleOtherAnims.dance.anim(scene, [attacker, defender]);
+			scene.showEffect('pointer', {
+				x: attacker.x,
+				y: attacker.y + 30,
+				z: attacker.z,
+				scale: 0.4,
+				opacity: 1,
+				time: 100,
+			}, {
+				y: attacker.y + 60,
+				opacity: 1,
+				time: 550,
+			}, 'decel', 'fade');
+			scene.showEffect('angry', {
+				x: defender.x + 20,
+				y: defender.y + 20,
+				z: defender.z,
+				scale: 0.5,
+				opacity: 0.5,
+				time: 0,
+			}, {
+				scale: 1,
+				opacity: 1,
+				time: 300,
+			}, 'ballistic2Under', 'fade');
+			scene.showEffect('angry', {
+				x: defender.x - 20,
+				y: defender.y + 10,
+				z: defender.z,
+				scale: 0.5,
+				opacity: 0.5,
+				time: 100,
+			}, {
+				scale: 1,
+				opacity: 1,
+				time: 400,
+			}, 'ballistic2Under', 'fade');
+			scene.showEffect('angry', {
+				x: defender.x,
+				y: defender.y + 40,
+				z: defender.z,
+				scale: 0.5,
+				opacity: 0.5,
+				time: 200,
+			}, {
+				scale: 1,
+				opacity: 1,
+				time: 500,
+			}, 'ballistic2Under', 'fade');
+		},
+	},
+	swagger: {
+		anim(scene, [attacker, defender]) {
+			BattleOtherAnims.shake.anim(scene, [attacker]);
+
+			scene.showEffect('angry', {
+				x: defender.x + 20,
+				y: defender.y + 20,
+				z: defender.z,
+				scale: 0.5,
+				opacity: 0.5,
+				time: 0,
+			}, {
+				scale: 1,
+				opacity: 1,
+				time: 300,
+			}, 'ballistic2Under', 'fade');
+			scene.showEffect('angry', {
+				x: defender.x - 20,
+				y: defender.y + 10,
+				z: defender.z,
+				scale: 0.5,
+				opacity: 0.5,
+				time: 100,
+			}, {
+				scale: 1,
+				opacity: 1,
+				time: 400,
+			}, 'ballistic2Under', 'fade');
+			scene.showEffect('angry', {
+				x: defender.x,
+				y: defender.y + 40,
+				z: defender.z,
+				scale: 0.5,
+				opacity: 0.5,
+				time: 200,
+			}, {
+				scale: 1,
+				opacity: 1,
+				time: 500,
+			}, 'ballistic2Under', 'fade');
+		},
+	},
+	
 	taunt: {
 		anim(scene, [attacker, defender]) {
 			BattleOtherAnims.dance.anim(scene, [attacker, defender]);

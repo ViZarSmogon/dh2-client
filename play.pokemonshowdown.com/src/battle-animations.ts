@@ -2012,6 +2012,8 @@ export class PokemonSprite extends Sprite {
 		weaponryspd: ['Weaponry: SpD', 'good'],
 		weaponryspe: ['Weaponry: Spe', 'good'],
 		obey: ['Obey', 'bad'],
+		vinepull: ['Vine Pull', 'bad'],
+		reposition: ['Re-Position', 'neutral'],
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;
