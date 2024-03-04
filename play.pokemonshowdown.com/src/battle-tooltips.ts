@@ -50,7 +50,7 @@ class ModifiableValue {
 		const ignoreKlutz = [
 			"Macho Brace", "Power Anklet", "Power Band", "Power Belt", "Power Bracer", "Power Lens", "Power Weight",
 		];
-		if (this.tryAbility('Klutz') && !ignoreKlutz.includes(itemName) && !this.battle.tier.includes("New Region")) {
+		if (this.tryAbility('Klutz') && !ignoreKlutz.includes(itemName)) {
 			this.comment.push(` (${itemName} suppressed by Klutz)`);
 			return false;
 		}
@@ -1024,12 +1024,10 @@ class BattleTooltips {
 			if (this.battle.gen > 2 && ability === 'quickfeet') {
 				stats.spe = Math.floor(stats.spe * 1.5);
 			} else if (pokemon.status === 'par') {
-				if (this.battle.tier.includes("New Region")) {
+				if (this.battle.gen <= 6) {
 					stats.spe = Math.floor(stats.spe * 0.5);
-				} else if (this.battle.gen <= 6) {
-					stats.spe = Math.floor(stats.spe * 0.25);
 				} else {
-					stats.spe = Math.floor(stats.spe * 0.5);
+					stats.spe = Math.floor(stats.spe * 0.25);
 				}
 			}
 		}
@@ -1103,11 +1101,8 @@ class BattleTooltips {
 		if (ability === 'purepower' || ability === 'hugepower') {
 			stats.atk *= 2;
 		}
-		if (ability === 'hustle' || (ability === 'gorillatactics' && !clientPokemon?.volatiles['dynamax']) && !this.battle.tier.includes("New Region")) {
+		if (ability === 'hustle' || (ability === 'gorillatactics' && !clientPokemon?.volatiles['dynamax'])) {
 			stats.atk = Math.floor(stats.atk * 1.5);
-		}
-		if (ability === 'gorillatactics' && !clientPokemon?.volatiles['dynamax'] && this.battle.tier.includes("New Region")) {
-			stats.atk = Math.floor(stats.atk * 1.3);
 		}
 		if (weather) {
 			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm') {
@@ -1131,11 +1126,7 @@ class BattleTooltips {
 						stats.spa = Math.floor(stats.spa * 1.5);
 					}
 					if (ability === 'orichalcumpulse') {
-						if (this.battle.tier.includes("New Region")) {
-							stats.atk = Math.floor(stats.atk * 1.3);
-						} else {
-							stats.atk = Math.floor(stats.atk * 1.3333);
-						}
+						stats.atk = Math.floor(stats.atk * 1.3333);
 					}
 					let allyActive = clientPokemon?.side.active;
 					if (allyActive) {
@@ -1175,20 +1166,6 @@ class BattleTooltips {
 					} else {
 						stats[statName] = Math.floor(stats[statName] * 1.3);
 					}
-				} 
-				if (clientPokemon.volatiles['dragonmight' + statName] && this.battle.tier.includes("New Region")) {
-					if (statName === 'spe') {
-						speedModifiers.push(1.5);
-					} else {
-						stats[statName] = Math.floor(stats[statName] * 1.3);
-					}
-				}
-				if (clientPokemon.volatiles['weaponry' + statName] && this.battle.tier.includes("New Region")) {
-					if (statName === 'spe') {
-							speedModifiers.push(1.5);
-						} else {
-							stats[statName] = Math.floor(stats[statName] * 1.5);
-						}
 				}
 			}
 		}
@@ -1207,34 +1184,15 @@ class BattleTooltips {
 			stats.def = Math.floor(stats.def * 1.5);
 			stats.spd = Math.floor(stats.spd * 1.5);
 		}
-		if (this.battle.tier.includes("New Region") && item === 'eviolite' && (isNFE || this.battle.dex.species.get(serverPokemon.speciesForme).id === 'alomomola' || 
-			this.battle.dex.species.get(serverPokemon.speciesForme).id === 'falinks' || 
-			this.battle.dex.species.get(serverPokemon.speciesForme).id === 'honchcrow' || 
-			this.battle.dex.species.get(serverPokemon.speciesForme).id === 'camerupt')) {
-			stats.def = Math.floor(stats.def * 1.5);
-			stats.spd = Math.floor(stats.spd * 1.5);
-		}
 		if (ability === 'grasspelt' && this.battle.hasPseudoWeather('Grassy Terrain')) {
-			if (this.battle.tier.includes("New Region")) {
-				stats.def = Math.floor(stats.def * 1.3);
-			} else {
-				stats.def = Math.floor(stats.def * 1.5);
-			}
+			stats.def = Math.floor(stats.def * 1.5);
 		}
 		if (this.battle.hasPseudoWeather('Electric Terrain')) {
 			if (ability === 'surgesurfer') {
-				if (this.battle.tier.includes("New Region")) {
-					speedModifiers.push(1.5);
-				} else {
-					speedModifiers.push(2);
-				}
+				speedModifiers.push(2);
 			}
 			if (ability === 'hadronengine') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.spa = Math.floor(stats.spa * 1.3);
-				} else {
-					stats.spa = Math.floor(stats.spa * 1.3333);
-				}
+				stats.spa = Math.floor(stats.spa * 1.3333);
 			}
 		}
 		if (item === 'choicespecs' && !clientPokemon?.volatiles['dynamax']) {
@@ -1264,40 +1222,13 @@ class BattleTooltips {
 		if (item === 'assaultvest') {
 			stats.spd = Math.floor(stats.spd * 1.5);
 		}
-		if (this.battle.tier.includes("New Region")) {
-			if (item === 'powerband') {
-				const reducedSpe = Math.floor(stats.spe * 0.33);
-				stats.spd = stats.spd + reducedSpe;
-			}
-			if (item === 'powerbelt') {
-				const reducedSpe = Math.floor(stats.spe * 0.33);
-				stats.atk = stats.atk + reducedSpe;
-			}
-			if (item === 'powerbracer') {
-				const reducedSpe = Math.floor(stats.spe * 0.33);
-				stats.def = stats.def + reducedSpe;
-			}
-			if (item === 'powerlens') {
-				const reducedSpe = Math.floor(stats.spe * 0.33);
-				stats.spa = stats.spa + reducedSpe;
-			}
-		}
 		if (item === 'deepseascale' && species === 'Clamperl') {
 			stats.spd *= 2;
 		}
 		if (item === 'choicescarf' && !clientPokemon?.volatiles['dynamax']) {
 			speedModifiers.push(1.5);
 		}
-		if (item === 'ironball' || (speedHalvingEVItems.includes(item) && !this.battle.tier.includes("New Region"))) {
-			speedModifiers.push(0.5);
-		}
-		if (['powerband', 'powerbelt', 'powerbracer', 'powerlens', 'powerweight'].includes(item) && this.battle.tier.includes("New Region")) {
-			speedModifiers.push(0.67);
-		}
-		if (item === 'poweranklet' && this.battle.tier.includes("New Region")) {
-			speedModifiers.push(1.5);
-		}
-		if (item === 'machobrace' && this.battle.tier.includes("New Region")) {
+		if (item === 'ironball' || speedHalvingEVItems.includes(item)) {
 			speedModifiers.push(0.5);
 		}
 		if (ability === 'furcoat') {
@@ -1305,38 +1236,22 @@ class BattleTooltips {
 		}
 		if (this.battle.abilityActive('Vessel of Ruin')) {
 			if (ability !== 'vesselofruin') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.spa = Math.floor(stats.spa * 0.9);
-				} else {
-					stats.spa = Math.floor(stats.spa * 0.75);
-				}
+				stats.spa = Math.floor(stats.spa * 0.75);
 			}
 		}
 		if (this.battle.abilityActive('Sword of Ruin')) {
 			if (ability !== 'swordofruin') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.def = Math.floor(stats.def * 0.9);
-				} else {
-					stats.def = Math.floor(stats.def * 0.75);
-				}
+				stats.def = Math.floor(stats.def * 0.75);
 			}
 		}
 		if (this.battle.abilityActive('Tablets of Ruin')) {
 			if (ability !== 'tabletsofruin') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.atk = Math.floor(stats.atk * 0.9);
-				} else {
-					stats.atk = Math.floor(stats.atk * 0.75);
-				}
+				stats.atk = Math.floor(stats.atk * 0.75);
 			}
 		}
 		if (this.battle.abilityActive('Beads of Ruin')) {
 			if (ability !== 'beadsofruin') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.spd = Math.floor(stats.spd * 0.9);
-				} else {
-					stats.spd = Math.floor(stats.spd * 0.75);
-				}
+				stats.spd = Math.floor(stats.spd * 0.75);
 			}
 		}
 		const sideConditions = this.battle.mySide.sideConditions;
@@ -1356,12 +1271,10 @@ class BattleTooltips {
 		stats.spe = stats.spe % 1 > 0.5 ? Math.ceil(stats.spe) : Math.floor(stats.spe);
 
 		if (pokemon.status === 'par' && ability !== 'quickfeet') {
-			if (this.battle.tier.includes("New Region")) {
+			if (this.battle.gen <= 6) {
 				stats.spe = Math.floor(stats.spe * 0.5);
-			} else if (this.battle.gen <= 6) {
-				stats.spe = Math.floor(stats.spe * 0.25);
 			} else {
-				stats.spe = Math.floor(stats.spe * 0.5);
+				stats.spe = Math.floor(stats.spe * 0.25);
 			}
 		}
 
@@ -1504,9 +1417,6 @@ class BattleTooltips {
 		if (move.id === 'revelationdance') {
 			moveType = pokemonTypes[0];
 		}
-		if (move.id === 'typeblast' && this.battle.tier.includes("New Region")) {
-			moveType = pokemonTypes[0];
-		}
 		// Moves that require an item to change their type.
 		let item = Dex.items.get(value.itemName);
 		if (move.id === 'multiattack' && item.onMemory) {
@@ -1634,10 +1544,6 @@ class BattleTooltips {
 			const stats = this.calculateModifiedStats(pokemon, serverPokemon, true);
 			if (stats.atk > stats.spa) category = 'Physical';
 		}
-		if (this.battle.tier.includes("New Region") && (move.id === 'technoblast' || move.id === 'typeblast')) {
-			const stats = this.calculateModifiedStats(pokemon, serverPokemon, true);
-			if (stats.atk > stats.spa) category = 'Physical';
-		}
 		return [moveType, category];
 	}
 
@@ -1650,9 +1556,6 @@ class BattleTooltips {
 		if (move.id === 'toxic' && this.battle.gen >= 6 && this.pokemonHasType(pokemon, 'Poison')) {
 			value.set(0, "Poison type");
 			return value;
-		}
-		if (move.id === 'toxic' && this.battle.tier.includes("New Region")) {
-			value.abilityModify(0, 'Gooey');
 		}
 		if (move.id === 'blizzard' && this.battle.gen >= 4) {
 			value.weatherModify(0, 'Hail');
@@ -1787,9 +1690,6 @@ class BattleTooltips {
 		if (move.id === 'brine' && target && target.hp * 2 <= target.maxhp) {
 			value.modify(2, 'Brine + target below half HP');
 		}
-		if (move.id === 'guillotine' && target && target.hp * 2 <= target.maxhp && this.battle.tier.includes("New Region")) {
-			value.modify(1.5, 'Guillotine + target below half HP');
-		}
 		if (move.id === 'eruption' || move.id === 'waterspout' || move.id === 'dragonenergy') {
 			value.set(Math.floor(150 * pokemon.hp / pokemon.maxhp) || 1);
 		}
@@ -1888,42 +1788,6 @@ class BattleTooltips {
 			move.id === 'watershuriken' && pokemon.getSpeciesForme() === 'Greninja-Ash' && pokemon.ability === 'Battle Bond'
 		) {
 			value.set(20, 'Battle Bond');
-		}
-		
-		//Cresent Move modifiers
-		if (serverPokemon.item && this.battle.tier.includes("New Region")) {
-			let item = Dex.items.get(serverPokemon.item);
-			let species = Dex.species.get(serverPokemon.speciesForme).baseSpecies;
-			if (item.name === 'Cresent Bracelet') {
-				if (species === 'Darkrai' && moveType === 'Dark') {
-					value.modify(1.33, 'Darkrai + Dim Shadow');
-				}
-				if (
-					move.id === 'headlongrush' && species === 'Ursaluna'
-				) {
-					if (pokemon.hp <= pokemon.maxhp * 0.2) {
-						value.set(210, 'Ursaluna below 20% HP');
-					} else if (pokemon.hp <= pokemon.maxhp * 0.4) {
-						value.set(196, 'Ursaluna below 40% HP');
-					} else if (pokemon.hp <= pokemon.maxhp * 0.6) {
-						value.set(182, 'Ursaluna below 60% HP');
-					} else if (pokemon.hp <= pokemon.maxhp * 0.8) {
-						value.set(168, 'Ursaluna below 80% HP');
-					} else {
-						value.set(154, 'Ursaluna below full HP');
-					}
-				}
-				if (
-					move.id === 'aerialace' && species === 'Roaring Moon'
-				) {
-					value.set(100, 'Roaring Moon');
-				}
-				if (
-					move.id === 'psyshock' && species === 'Iron Valiant'
-				) {
-					value.set(120, 'Iron Valiant');
-				}
-			}
 		}
 		
 		// Moves that check opponent speed
@@ -2033,25 +1897,15 @@ class BattleTooltips {
 		if (move.flags['contact']) {
 			value.abilityModify(1.3, "Tough Claws");
 		}
-		if (this.battle.tier.includes("New Region")) {
-			value.abilityModify(1.25, "Long Reach");
-		}
 		if (move.flags['sound']) {
 			value.abilityModify(1.3, "Punk Rock");
 		}
-		if (move.flags['slicing'] && !this.battle.tier.includes("New Region")) {
+		if (move.flags['slicing']) {
 			value.abilityModify(1.5, "Sharpness");
-		}
-		if (move.flags['slicing'] && this.battle.tier.includes("New Region")) {
-			value.abilityModify(1.3, "Sharpness");
 		}
 		for (let i = 1; i <= 5 && i <= pokemon.side.faintCounter; i++) {
 			if (pokemon.volatiles[`fallen${i}`]) {
-				if (this.battle.tier.includes("New Region")) {
-					value.abilityModify(1 + 0.05 * i, "Supreme Overlord");
-				} else {
-					value.abilityModify(1 + 0.1 * i, "Supreme Overlord");
-				}
+				value.abilityModify(1 + 0.1 * i, "Supreme Overlord");
 			}
 		}
 		if (target) {
@@ -2082,38 +1936,6 @@ class BattleTooltips {
 		if (move.recoil || move.hasCrashDamage) {
 			value.abilityModify(1.2, 'Reckless');
 		}
-		if (this.battle.tier.includes("New Region") && move.type === 'Poison') {
-			value.abilityModify(1.3, 'Gooey');
-		}
-		if (this.battle.tier.includes("New Region")) {
-			if (move.type === 'Bug' && pokemon.hp > pokemon.maxhp / 3) {
-				value.abilityModify(1.2, 'Swarm');
-			} else if (pokemon.hp <= pokemon.maxhp / 3) {
-				value.abilityModify(1.5, 'Swarm');
-			}
-			
-			if (move.type === 'Fire' && pokemon.hp > pokemon.maxhp / 3) {
-				value.abilityModify(1.2, 'Blaze');
-			} else if (pokemon.hp <= pokemon.maxhp / 3) {
-				value.abilityModify(1.5, 'Blaze');
-			}
-			
-			if (move.type === 'Grass' && pokemon.hp > pokemon.maxhp / 3) {
-				value.abilityModify(1.2, 'Overgrow');
-			} else if (pokemon.hp <= pokemon.maxhp / 3) {
-				value.abilityModify(1.5, 'Overgrow');
-			}
-			
-			if (move.type === 'Water' && pokemon.hp > pokemon.maxhp / 3) {
-				value.abilityModify(1.2, 'Torrent');
-			} else if (pokemon.hp <= pokemon.maxhp / 3) {
-				value.abilityModify(1.5, 'Torrent');
-			}
-		}
-		if ((move.type === 'Dragon' || move.type === 'Ice' || move.type === 'Fire' || move.type === 'Electric') && this.battle.tier.includes("New Region")) {
-			value.abilityModify(2, 'Dragon Might');
-		}
-
 		if (move.category !== 'Status') {
 			let auraBoosted = '';
 			let auraBroken = false;
@@ -2132,8 +1954,6 @@ class BattleTooltips {
 					value.modify(1.3, 'Power Spot');
 				} else if (allyAbility === 'Steely Spirit' && moveType === 'Steel') {
 					value.modify(1.5, 'Steely Spirit');
-				} else if (allyAbility === 'Victory Star' && this.battle.tier.includes("New Region")) {
-					value.modify(1.1, 'Victory Star');
 				}
 			}
 			for (const foe of pokemon.side.foe.active) {
@@ -2285,12 +2105,6 @@ class BattleTooltips {
 			return value;
 		}
 		
-		//Memory
-		if (this.battle.tier.includes("New Region") && item.onMemory === moveType && !item.zMove) {
-			value.itemModify(1.2);
-			return value;
-		}
-
 		// Incenses
 		if (BattleTooltips.incenseTypes[item.name] === moveType) {
 			value.itemModify(1.2);
@@ -2322,15 +2136,6 @@ class BattleTooltips {
 			value.itemModify(1.2);
 			return value;
 		}
-		if (this.battle.tier.includes("New Region") && speciesName.startsWith('Genesect') && (
-			(itemName === 'Burn Drive' && ['Bug', 'Steel', 'Fire'].includes(moveType)) ||
-			(itemName === 'Chill Drive' && ['Bug', 'Steel', 'Ice'].includes(moveType)) ||
-			(itemName === 'Douse Drive' && ['Bug', 'Steel', 'Water'].includes(moveType)) ||
-			(itemName === 'Shock Drive' && ['Bug', 'Steel', 'Electric'].includes(moveType))
-			)) {
-			value.itemModify(1.2);
-			return value;
-		}
 
 		// Gems
 		if (BattleTooltips.noGemMoves.includes(moveName)) return value;
@@ -2341,27 +2146,8 @@ class BattleTooltips {
 
 		if (itemName === 'Muscle Band' && move.category === 'Physical' ||
 			itemName === 'Wise Glasses' && move.category === 'Special' ||
-			itemName === 'Punching Glove' && move.flags['punch'] && !this.battle.tier.includes("New Region")) {
+			itemName === 'Punching Glove' && move.flags['punch']) {
 			value.itemModify(1.1);
-		}
-		if (this.battle.tier.includes("New Region")) {
-			if (itemName === 'Loaded Dice' && move.multihit ||
-				itemName === 'Protective Pads' && move.flags['contact']) {
-				value.itemModify(1.1);
-			}
-			if (itemName === 'Power Anklet') {
-				value.itemModify(0.8);
-			}
-			if (itemName === 'Macho Brace') {
-				value.itemModify(1.3);
-			}
-			if (itemName === 'Punching Glove' && move.flags['punch'] ||
-				itemName === 'Razor Claw' && move.flags['slicing'] ||
-				itemName === 'Razor Fang' && move.flags['bite'] ||
-				itemName === 'Punching Glove' && move.flags['punch'] ||
-				itemName === 'Quick Claw' && move.priority > 0.1) {
-				value.itemModify(1.3);
-			}
 		}
 		return value;
 	}
