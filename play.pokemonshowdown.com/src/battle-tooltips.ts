@@ -1104,7 +1104,7 @@ class BattleTooltips {
 			stats.atk = Math.floor(stats.atk * 1.5);
 		}
 		if (weather) {
-			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm') {
+			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm' && !this.battle.tier.includes("Weakest")) {
 				stats.spd = Math.floor(stats.spd * 1.5);
 			}
 			if (this.pokemonHasType(pokemon, 'Ice') && weather === 'snow') {
@@ -1179,7 +1179,7 @@ class BattleTooltips {
 					// Pokemon with Hisui evolutions
 					evoSpecies.isNonstandard === "Unobtainable";
 		});
-		if (item === 'eviolite' && (isNFE || this.battle.dex.species.get(serverPokemon.speciesForme).id === 'dipplin')) {
+		if (item === 'eviolite' && isNFE) {
 			stats.def = Math.floor(stats.def * 1.5);
 			stats.spd = Math.floor(stats.spd * 1.5);
 		}
@@ -1556,7 +1556,7 @@ class BattleTooltips {
 			value.set(0, "Poison type");
 			return value;
 		}
-		if (move.id === 'blizzard' && this.battle.gen >= 4) {
+		if (move.id === 'blizzard' && this.battle.gen >= 4 && !this.battle.tier.includes('Weakest')) {
 			value.weatherModify(0, 'Hail');
 			value.weatherModify(0, 'Snow');
 		}
