@@ -2014,6 +2014,7 @@ export class PokemonSprite extends Sprite {
 		obey: ['Obey', 'bad'],
 		vinepull: ['Vine Pull', 'bad'],
 		reposition: ['Re-Position', 'neutral'],
+		mortaldrain: ['Mortal Drain', 'bad'],
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;

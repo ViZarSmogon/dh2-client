@@ -201,12 +201,10 @@ class BattleTooltips {
 		$elem.on('touchstart', '.has-tooltip', e => {
 			e.preventDefault();
 			this.holdLockTooltipEvent(e);
-			if (!BattleTooltips.parentElem) {
-				// should never happen, but in case there's a bug in the tooltip handler
-				BattleTooltips.parentElem = e.currentTarget;
+			if (e.currentTarget === BattleTooltips.parentElem && BattleTooltips.parentElem!.tagName === 'BUTTON') {
+				$(BattleTooltips.parentElem!).addClass('pressed');
+				BattleTooltips.isPressed = true;
 			}
-			$(BattleTooltips.parentElem!).addClass('pressed');
-			BattleTooltips.isPressed = true;
 		});
 		$elem.on('touchend', '.has-tooltip', e => {
 			e.preventDefault();
@@ -1025,6 +1023,12 @@ class BattleTooltips {
 
 			if (this.battle.gen > 2 && ability === 'quickfeet') {
 				stats.spe = Math.floor(stats.spe * 1.5);
+			} else if (pokemon.status === 'par') {
+				if (this.battle.gen > 6) {
+					stats.spe = Math.floor(stats.spe * 0.5);
+				} else {
+					stats.spe = Math.floor(stats.spe * 0.25);
+				}
 			}
 		}
 
@@ -1360,30 +1364,11 @@ class BattleTooltips {
 	getSpeedRange(pokemon: Pokemon): [number, number] {
 		const tr = Math.trunc || Math.floor;
 		const species = pokemon.getSpecies();
-		let rules = this.battle.rules;
 		let baseSpe = species.baseStats.spe;
-		if (rules['Scalemons Mod']) {
+		if (this.battle.rules['Scalemons Mod']) {
 			const bstWithoutHp = species.bst - species.baseStats.hp;
 			const scale = 600 - species.baseStats.hp;
 			baseSpe = tr(baseSpe * scale / bstWithoutHp);
-			if (baseSpe < 1) baseSpe = 1;
-			if (baseSpe > 255) baseSpe = 255;
-		}
-		if (rules['Frantic Fusions Mod']) {
-			const fusionSpecies = this.battle.dex.species.get(pokemon.name);
-			if (fusionSpecies.exists && fusionSpecies.name !== species.name) {
-				baseSpe = baseSpe + tr(fusionSpecies.baseStats.spe / 4);
-				if (baseSpe < 1) baseSpe = 1;
-				if (baseSpe > 255) baseSpe = 255;
-			}
-		}
-		if (rules['Flipped Mod']) {
-			baseSpe = species.baseStats.hp;
-			if (baseSpe < 1) baseSpe = 1;
-			if (baseSpe > 255) baseSpe = 255;
-		}
-		if (rules['350 Cup Mod'] && species.bst <= 350) {
-			baseSpe *= 2;
 			if (baseSpe < 1) baseSpe = 1;
 			if (baseSpe > 255) baseSpe = 255;
 		}
@@ -2211,14 +2196,6 @@ class BattleTooltips {
 					if (species.abilities['1']) abilityData.possibilities.push(species.abilities['1']);
 					if (species.abilities['H']) abilityData.possibilities.push(species.abilities['H']);
 					if (species.abilities['S']) abilityData.possibilities.push(species.abilities['S']);
-					if (this.battle.rules['Frantic Fusions Mod']) {
-						const fusionSpecies = this.battle.dex.species.get(clientPokemon.name);
-						if (fusionSpecies.exists && fusionSpecies.name !== species.name) {
-							abilityData.possibilities = Array.from(
-								new Set(abilityData.possibilities.concat(Object.values(fusionSpecies.abilities)))
-							);
-						}
-					}
 				}
 			}
 		}
@@ -2250,10 +2227,7 @@ class BattleTooltips {
 				if (baseAbilityName && baseAbilityName !== abilityName) text += ' (base: ' + baseAbilityName + ')';
 			}
 		}
-		const tier = this.battle.tier;
-		if (!text && abilityData.possibilities.length && !hidePossible &&
-			!(tier.includes('Almost Any Ability') || tier.includes('Hackmons') ||
-				tier.includes('Inheritance') || tier.includes('Metronome'))) {
+		if (!text && abilityData.possibilities.length && !hidePossible) {
 			text = '<small>Possible abilities:</small> ' + abilityData.possibilities.join(', ');
 		}
 		return text;
@@ -2312,9 +2286,9 @@ class BattleStatGuesser {
 	supportsEVs: boolean;
 	supportsAVs: boolean;
 
-	constructor(formatid: ID) {
+	constructor(formatid: ID, modid: ID) {
 		this.formatid = formatid;
-		this.dex = formatid ? Dex.mod(formatid.slice(0, 4) as ID) : Dex;
+		this.dex = modid ? Dex.mod(modid) : formatid ? Dex.mod(formatid.slice(0, 4) as ID) : Dex;
 		this.ignoreEVLimits = (
 			this.dex.gen < 3 ||
 			((this.formatid.endsWith('hackmons') || this.formatid.endsWith('bh')) && this.dex.gen !== 6) ||
