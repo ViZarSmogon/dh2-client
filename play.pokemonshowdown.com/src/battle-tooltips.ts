@@ -1024,7 +1024,9 @@ class BattleTooltips {
 			if (this.battle.gen > 2 && ability === 'quickfeet') {
 				stats.spe = Math.floor(stats.spe * 1.5);
 			} else if (pokemon.status === 'par') {
-				if (this.battle.gen > 6) {
+				if (this.battle.tier.includes("New Region")) {
+					stats.spe = Math.floor(stats.spe * 0.5);
+				} else if (this.battle.gen > 6) {
 					stats.spe = Math.floor(stats.spe * 0.5);
 				} else {
 					stats.spe = Math.floor(stats.spe * 0.25);
@@ -1104,7 +1106,20 @@ class BattleTooltips {
 		if (ability === 'hustle' || (ability === 'gorillatactics' && !clientPokemon?.volatiles['dynamax'])) {
 			stats.atk = Math.floor(stats.atk * 1.5);
 		}
+		if (this.battle.hasPseudoWeather('Grassy Terrain') && this.battle.tier.includes("New Region") && pokemon.isGrounded(serverPokemon)) {
+			if (!this.pokemonHasType(pokemon, 'Bug') && !this.pokemonHasType(pokemon, 'Grass')) {
+				stats.spa = Math.floor(stats.spa * 0.75);
+			}
+		}
 		if (weather) {
+			if (this.battle.tier.includes("New Region")) {
+				if (this.pokemonHasType(pokemon, 'Grass') && weather === 'sunnyday') {
+					stats.spd = Math.floor(stats.spd * 1.5);
+				}
+				if (this.pokemonHasType(pokemon, 'Grass') && weather === 'raindance') {
+					stats.def = Math.floor(stats.def * 1.5);
+				}
+			}
 			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm') {
 				stats.spd = Math.floor(stats.spd * 1.5);
 			}
@@ -1126,16 +1141,26 @@ class BattleTooltips {
 						stats.spa = Math.floor(stats.spa * 1.5);
 					}
 					if (ability === 'orichalcumpulse') {
-						stats.atk = Math.floor(stats.atk * 1.3333);
+						if (this.battle.tier.includes("New Region")) {
+							stats.atk = Math.floor(stats.atk * 1.3);
+						} else {
+							stats.atk = Math.floor(stats.atk * 1.3333);
+						}
 					}
 					let allyActive = clientPokemon?.side.active;
 					if (allyActive) {
 						for (const ally of allyActive) {
 							if (!ally || ally.fainted) continue;
 							let allyAbility = this.getAllyAbility(ally);
-							if (allyAbility === 'Flower Gift' && (ally.getSpecies().baseSpecies === 'Cherrim' || this.battle.gen <= 4)) {
-								stats.atk = Math.floor(stats.atk * 1.5);
-								stats.spd = Math.floor(stats.spd * 1.5);
+							if (allyAbility === 'Flower Gift') {
+								if (this.battle.tier.includes("New Region")) {
+									stats.atk = Math.floor(stats.atk * 1.3);
+									stats.spa = Math.floor(stats.spa * 1.3);
+									stats.spd = Math.floor(stats.spd * 1.3);
+								} else if (ally.getSpecies().baseSpecies === 'Cherrim' || this.battle.gen <= 4) {
+									stats.atk = Math.floor(stats.atk * 1.5);
+									stats.spd = Math.floor(stats.spd * 1.5);
+								}
 							}
 						}
 					}
@@ -1179,9 +1204,24 @@ class BattleTooltips {
 					// Pokemon with Hisui evolutions
 					evoSpecies.isNonstandard === "Unobtainable";
 		});
-		if (item === 'eviolite' && (isNFE || this.battle.dex.species.get(serverPokemon.speciesForme).id === 'dipplin')) {
+		if (item === 'eviolite' && (isNFE || this.battle.dex.species.get(serverPokemon.speciesForme).id === 'dipplin') && !this.battle.tier.includes("New Region")) {
 			stats.def = Math.floor(stats.def * 1.5);
 			stats.spd = Math.floor(stats.spd * 1.5);
+		}
+		
+		if (this.battle.tier.includes("New Region")) {
+			let species = this.battle.dex.species.get(serverPokemon.speciesForme);
+			if (item === 'eviolite' && (isNFE || ['sandslash', 'banette', 'tauros', 'grapploct', 'cherrim', 'zebstrika', 'sableye', 'kosmeye', 'mawile', 'sagwile', 'zangoose', 'seviper'].includes(species.id))) {
+				stats.def = Math.floor(stats.def * 1.5);
+				stats.spd = Math.floor(stats.spd * 1.5);
+			}
+			if (ability === 'maternalguard' && (isNFE || ['sandslash', 'banette', 'tauros', 'grapploct', 'cherrim', 'zebstrika', 'sableye', 'kosmeye', 'mawile', 'sagwile', 'zangoose', 'seviper'].includes(species.id))) {
+				stats.def = Math.floor(stats.def * 1.3);
+				stats.spd = Math.floor(stats.spd * 1.3);
+			}
+			if (['psn', 'tox'].includes(pokemon.status) && ability === 'venommaster') {
+				stats.atk = Math.floor(stats.atk * 1.3);
+			}
 		}
 		if (ability === 'grasspelt' && this.battle.hasPseudoWeather('Grassy Terrain')) {
 			stats.def = Math.floor(stats.def * 1.5);
@@ -1191,7 +1231,11 @@ class BattleTooltips {
 				speedModifiers.push(2);
 			}
 			if (ability === 'hadronengine') {
-				stats.spa = Math.floor(stats.spa * 1.3333);
+				if (this.battle.tier.includes("New Region")) {
+					stats.spa = Math.floor(stats.spa * 1.3);
+				} else {
+					stats.spa = Math.floor(stats.spa * 1.3333);
+				}
 			}
 		}
 		if (item === 'choicespecs' && !clientPokemon?.volatiles['dynamax']) {
@@ -1270,7 +1314,9 @@ class BattleTooltips {
 		stats.spe = stats.spe % 1 > 0.5 ? Math.ceil(stats.spe) : Math.floor(stats.spe);
 
 		if (pokemon.status === 'par' && ability !== 'quickfeet') {
-			if (this.battle.gen > 6) {
+			if (this.battle.tier.includes("New Region")) { 
+				stats.spe = Math.floor(stats.spe * 0.5);
+			} else if (this.battle.gen > 6) {
 				stats.spe = Math.floor(stats.spe * 0.5);
 			} else {
 				stats.spe = Math.floor(stats.spe * 0.25);
@@ -1502,6 +1548,42 @@ class BattleTooltips {
 				break;
 			}
 		}
+		if (this.battle.tier.includes("New Region")) {
+			switch (move.id) {
+			case 'quickdodge':
+				moveType = 'Bug';
+				break;
+			case 'evilscheme':
+			case 'jostle':
+				moveType = 'Dark';
+				break;
+			case 'dragonspeer':
+				moveType = 'Dragon';
+				break;
+			case 'threedash':
+				moveType = 'Fighting';
+				break;
+			case 'squalluppercut':
+				moveType = 'Flying';
+				break;
+			case 'mortaldrain':
+			case 'spectralfang':
+				moveType = 'Ghost';
+				break;
+			case 'frostbite':
+				moveType = 'Ice';
+				break;
+			case 'plaguewave':
+				moveType = 'Poison'
+				break;
+			case 'steeltrunk':
+				moveType = 'Steel';
+				break;
+			case 'octowhip':
+				moveType = 'Water';
+				break;
+			}
+		}
 
 		// Other abilities that change the move type.
 		const noTypeOverride = [
@@ -1542,6 +1624,9 @@ class BattleTooltips {
 			move.id === 'terablast' && pokemon.terastallized) {
 			const stats = this.calculateModifiedStats(pokemon, serverPokemon, true);
 			if (stats.atk > stats.spa) category = 'Physical';
+		}
+		if (this.battle.tier.includes("New Region") && ['spectralfang', 'plaguewave', 'dragonspeer'].includes(move.id)) {
+			category = 'Special';
 		}
 		return [moveType, category];
 	}
@@ -1593,6 +1678,18 @@ class BattleTooltips {
 		// Accuracy modifiers start
 
 		let accuracyModifiers = [];
+		if (this.battle.tier.includes("New Region")) {
+			if (this.battle.hasPseudoWeather('Misty Terrain')) {
+				if (pokemon ? pokemon.isGrounded() : true) {
+					accuracyModifiers.push(5120);
+					value.modify(1.25, "Misty Terrain");
+				}
+			}
+			if (move.id === 'steeltrunk') {
+				value.set(90);
+			}
+		}
+		
 		if (this.battle.hasPseudoWeather('Gravity')) {
 			accuracyModifiers.push(6840);
 			value.modify(5 / 3, "Gravity");
@@ -1719,7 +1816,11 @@ class BattleTooltips {
 			value.modify(2, move.name + ' + status');
 		}
 		if (move.id === 'lastrespects') {
-			value.set(Math.min(50 + 50 * pokemon.side.faintCounter));
+			if (this.battle.tier.includes("New Region")) {
+				value.set(Math.min(60 + 20 * pokemon.side.faintCounter));
+			} else {
+				value.set(Math.min(50 + 50 * pokemon.side.faintCounter));
+			}
 		}
 		if (move.id === 'punishment' && target) {
 			let boostCount = 0;
@@ -1770,6 +1871,21 @@ class BattleTooltips {
 		if (move.id === 'hydrosteam') {
 			value.weatherModify(1.5, 'Sunny Day');
 		}
+		if (this.battle.tier.includes("New Region")) {
+			const sideConditions = this.battle.mySide.sideConditions;
+			if ((this.battle.weather === 'sunnyday' && moveType === 'Fire') ||
+				(this.battle.weather === 'raindance' && moveType === 'Water')) {
+				value.weatherModify(1.3, 'Weather');
+			}
+			if ((this.battle.weather === 'sunnyday' && moveType === 'Water' && move.id !== 'hydrosteam') ||
+				(this.battle.weather === 'raindance' && moveType === 'Fire') ||
+				(this.battle.weather === 'sandstorm' && moveType === 'Electric')) {
+				value.weatherModify(0.75, 'Weather');
+			}
+			if (sideConditions['stealthrock'] && move.id === 'rocksmash') {
+				value.set(100, 'Rock Smash + Stealth Rock');
+			}
+		}
 		if (move.id === 'psyblade' && this.battle.hasPseudoWeather('Electric Terrain')) {
 			value.modify(1.5, 'Electric Terrain');
 		}
@@ -1788,6 +1904,40 @@ class BattleTooltips {
 		) {
 			value.set(20, 'Battle Bond');
 		}
+		
+		//Custon Move BP
+		if (this.battle.tier.includes("New Region")) {
+			if (move.id === 'roaroftime') {
+				if (pokemon.getSpeciesForme() === 'Dialga-Origin') {
+					value.set(150, 'Dialga-Origin');
+				} else {
+					value.set(120);
+				}
+			} else if (move.id === 'astralbarrage' || move.id === 'glaciallance') {
+				value.set(100);
+			} else if (move.id === 'brickbreak' || move.id === 'psychicfangs' || move.id === 'squalluppercut' || move.id === 'spectralfang') {
+				value.set(90);
+			} else if (move.id === 'firepunch' || move.id === 'icepunch' || move.id === 'thunderpunch' || move.id === 'dragonspeer') {
+				value.set(85);
+			} else if (move.id === 'astonish') {
+				value.set(80);
+			} else if (move.id === 'firefang' || move.id === 'icefang' || move.id === 'thunderfang') {
+				value.set(75);
+			} else if (move.id === 'boltbeak' || move.id === 'fishiousrend' || move.id === 'steeltrunk') {
+				value.set(65);
+			} else if (move.id === 'wickedblow' || move.id === 'quickdodge') {
+				value.set(60);
+			} else if (move.id === 'firespin' || move.id === 'sandtomb' || move.id === 'whirlpool' || move.id === 'rocksmash') {
+				value.set(50);
+			} else if (move.id === 'jostle' || move.id === 'threedash') {
+				value.set(30);
+			} else if (move.id === 'surgingstrikes' || move.id === 'plaguewave') {
+				value.set(20);
+			} else if (move.id === 'octowhip') {
+				value.set(10);
+			}
+		}
+		
 		// Moves that check opponent speed
 		if (move.id === 'electroball' && target) {
 			let [minSpe, maxSpe] = this.getSpeedRange(target);
@@ -1934,6 +2084,39 @@ class BattleTooltips {
 		if (move.recoil || move.hasCrashDamage) {
 			value.abilityModify(1.2, 'Reckless');
 		}
+		if (this.battle.tier.includes("New Region")) {
+			const multiplier = Math.floor((2 - pokemon.hp / pokemon.maxhp)* 100) / 100;
+			if (move.flags['sound']) {
+				value.abilityModify(1.3, "Liquid Voice");
+			} 
+			if (move.type === 'Bug' && pokemon.hp !== pokemon.maxhp) {
+				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Swarm');
+			}
+			if (move.type === 'Fire' && pokemon.hp !== pokemon.maxhp) {
+				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Blaze');
+			}
+			if (move.type === 'Grass' && pokemon.hp !== pokemon.maxhp) {
+				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Overgrow');
+			}
+			if (move.type === 'Water' && pokemon.hp !== pokemon.maxhp) {
+				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Torrent');
+			}
+			if (move.type === 'Poison' && pokemon.hp !== pokemon.maxhp) {
+				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Stench');
+			}
+			if (move.type === 'Electric' && pokemon.hp !== pokemon.maxhp) {
+				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Transistor');
+			}
+			if (move.type === 'Dragon' && pokemon.hp !== pokemon.maxhp) {
+				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Dragon\s Maw');
+			}
+			if (move.type === 'Steel' && pokemon.hp !== pokemon.maxhp) {
+				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Steelworker');
+			}
+			if (!move.flags['contact']) {
+				value.abilityModify(1.25, "Long Reach");
+			}
+		}
 
 		if (move.category !== 'Status') {
 			let auraBoosted = '';
@@ -1953,6 +2136,8 @@ class BattleTooltips {
 					value.modify(1.3, 'Power Spot');
 				} else if (allyAbility === 'Steely Spirit' && moveType === 'Steel') {
 					value.modify(1.5, 'Steely Spirit');
+				} else if (this.battle.tier.includes("New Region") && allyAbility === 'Flower Gift' && moveType === 'Grass') {
+					value.modify(1.5, 'Flower Gift');
 				}
 			}
 			for (const foe of pokemon.side.foe.active) {
@@ -1975,9 +2160,16 @@ class BattleTooltips {
 		}
 
 		// Terrain
-		if ((this.battle.hasPseudoWeather('Electric Terrain') && moveType === 'Electric') ||
+		if (((this.battle.hasPseudoWeather('Electric Terrain') && moveType === 'Electric') ||
 			(this.battle.hasPseudoWeather('Grassy Terrain') && moveType === 'Grass') ||
-			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Psychic')) {
+			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Psychic')) && this.battle.tier.includes("New Region")) {
+			if (pokemon.isGrounded(serverPokemon)) {
+				value.modify(1.2, 'Terrain boost');
+			}
+		}
+		if (((this.battle.hasPseudoWeather('Electric Terrain') && moveType === 'Electric') ||
+			(this.battle.hasPseudoWeather('Grassy Terrain') && moveType === 'Grass') ||
+			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Psychic')) && !this.battle.tier.includes("New Region")) {
 			if (pokemon.isGrounded(serverPokemon)) {
 				value.modify(this.battle.gen > 7 ? 1.3 : 1.5, 'Terrain boost');
 			}
@@ -2022,6 +2214,9 @@ class BattleTooltips {
 		// Burn isn't really a base power modifier, so it needs to be applied after the Tera BP floor
 		if (this.battle.gen > 2 && serverPokemon.status === 'brn' && move.id !== 'facade' && move.category === 'Physical') {
 			if (!value.tryAbility("Guts")) value.modify(0.5, 'Burn');
+		}
+		if (this.battle.tier.includes("New Region") && serverPokemon.status === 'frz' && move.category === 'Special') {
+			value.modify(0.5, 'Freeze');
 		}
 
 		if (
@@ -2143,10 +2338,21 @@ class BattleTooltips {
 			return value;
 		}
 
-		if (itemName === 'Muscle Band' && move.category === 'Physical' ||
+		if ((itemName === 'Muscle Band' && move.category === 'Physical' ||
 			itemName === 'Wise Glasses' && move.category === 'Special' ||
-			itemName === 'Punching Glove' && move.flags['punch']) {
+			itemName === 'Punching Glove' && move.flags['punch'])) {
 			value.itemModify(1.1);
+		}
+		if (this.battle.tier.includes("New Region")) {
+			if (itemName === 'Loaded Dice' && move.multihit ||
+				itemName === 'Punching Glove' && move.flags['punch'] ||
+				itemName === 'Razor Claw' && move.flags['slicing'] ||
+				itemName === 'Razor Fang' && move.flags['bite'] ||
+				(itemName === 'Binding Band' || itemName === 'Grip Claw') && ['bind', 'clamp', 'firespin', 'infestation', 'magmastorm', 'sandtomb', 'snaptrap', 'thundercage', 'whirlpool', 'wrap'].includes(move.id) ||
+				itemName === 'King\'s Rock' && move.flags['wind']
+			) {
+				value.itemModify(1.3);
+			}
 		}
 
 		return value;

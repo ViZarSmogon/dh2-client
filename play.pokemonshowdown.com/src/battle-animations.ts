@@ -2015,6 +2015,7 @@ export class PokemonSprite extends Sprite {
 		vinepull: ['Vine Pull', 'bad'],
 		reposition: ['Re-Position', 'neutral'],
 		mortaldrain: ['Mortal Drain', 'bad'],
+		dragonspeer: ['Dragon Speer', 'bad'],
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;
