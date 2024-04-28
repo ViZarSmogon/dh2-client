@@ -1024,7 +1024,9 @@ class BattleTooltips {
 			if (this.battle.gen > 2 && ability === 'quickfeet') {
 				stats.spe = Math.floor(stats.spe * 1.5);
 			} else if (pokemon.status === 'par') {
-				if (this.battle.gen > 6) {
+				if (this.battle.tier.includes("Weakest")) {
+					stats.spe = Math.floor(stats.spe * 0.5);
+				} else if (this.battle.gen > 6) {
 					stats.spe = Math.floor(stats.spe * 0.5);
 				} else {
 					stats.spe = Math.floor(stats.spe * 0.25);
@@ -1060,8 +1062,14 @@ class BattleTooltips {
 		// check for light ball, thick club, metal/quick powder
 		// the only stat modifying items in gen 2 were light ball, thick club, metal powder
 		if (item === 'lightball' && speciesName === 'Pikachu' && this.battle.gen !== 4) {
-			if (this.battle.gen > 4) stats.atk *= 2;
-			stats.spa *= 2;
+			if (this.battle.gen > 4) {
+				if (this.battle.tier.includes("Weakest")) {
+					stats.spa *= 2;
+				} else {
+					stats.atk *= 2;
+					stats.spa *= 2;
+				}
+			}
 		}
 
 		if (item === 'thickclub') {
@@ -1270,7 +1278,9 @@ class BattleTooltips {
 		stats.spe = stats.spe % 1 > 0.5 ? Math.ceil(stats.spe) : Math.floor(stats.spe);
 
 		if (pokemon.status === 'par' && ability !== 'quickfeet') {
-			if (this.battle.gen > 6) {
+			if (this.battle.tier.includes("Weakest")) {
+				stats.spe = Math.floor(stats.spe * 0.5);
+			} else if (this.battle.gen > 6) {
 				stats.spe = Math.floor(stats.spe * 0.5);
 			} else {
 				stats.spe = Math.floor(stats.spe * 0.25);
@@ -1552,6 +1562,53 @@ class BattleTooltips {
 
 		let pokemon = value.pokemon!;
 		// Sure-hit accuracy
+		if (this.battle.tier.includes("Strongest")) {
+			if (['memento', 'nightmare'].includes(move.id)) {
+				value.set(0);
+			}
+			if (['thunderwave'].includes(move.id)) {
+				value.set(100);
+			}
+			if (['blizzard', 'swagger'].includes(move.id)) {
+				value.set(90);
+			}
+			if (['darkvoid'].includes(move.id)) {
+				value.set(80);
+			}
+			if (['hypnosis'].includes(move.id)) {
+				value.set(70);
+			}
+		}
+		if (this.battle.tier.includes("Weakest")) {
+			if (['bide', 'foresight', 'lockon', 'mimic', 'mindreader', 'odorsleuth', 'painsplit', 'roar', 'struggle', 'topsyturvy'].includes(move.id)) {
+				value.set(100);
+			}
+			if (['tackle'].includes(move.id)) {
+				value.set(95);
+			}
+			if (['esperwing', 'futuresight', 'lowkick', 'psychoshift', 'scaryface'].includes(move.id)) {
+				value.set(90);
+			}
+			if (['cottonspore', 'crabhammer', 'doomdesire', 'meteormash', 'pinmissile', 'ragingfury', 'toxic', 'whirlwind', 'wrap'].includes(move.id)) {
+				value.set(85);
+			}
+			if (['bonerush', 'psywave', 'rockblast', 'rocktomb'].includes(move.id)) {
+				value.set(80);
+			}
+			if (['bind', 'clamp', 'firespin', 'glare', 'razorwind', 'sandtomb', 'whirlpool', 'willowisp'].includes(move.id)) {
+				value.set(75);
+			}
+			if (['flash', 'gunkshot', 'magmastorm'].includes(move.id)) {
+				value.set(70);
+			}
+			if (['rockthrow'].includes(move.id)) {
+				value.set(65);
+			}
+			if (['disable', 'poisongas'].includes(move.id)) {
+				value.set(55);
+			}
+		}
+		
 		if (move.id === 'toxic' && this.battle.gen >= 6 && this.pokemonHasType(pokemon, 'Poison')) {
 			value.set(0, "Poison type");
 			return value;
@@ -1788,6 +1845,114 @@ class BattleTooltips {
 		) {
 			value.set(20, 'Battle Bond');
 		}
+		
+		if (this.battle.tier.includes("Strongest")) {
+			if (['skyattack', 'solarbeam'].includes(move.id)) {
+				value.set(200);
+			}
+			if (['dracometeor', 'leafstorm', 'overheat'].includes(move.id)) {
+				value.set(140);
+			}
+			if (['glaciallance'].includes(move.id)) {
+				value.set(130);
+			}
+			if (['blizzard', 'fireblast', 'hurricane', 'hydropump', 'magmastorm', 'thunder'].includes(move.id)) {
+				value.set(120);
+			}
+			if (['dig', 'heatwave', 'meteormash'].includes(move.id)) {
+				value.set(100);
+			}
+			if (['flamethrower', 'icebeam', 'muddywater', 'surf', 'thunderbolt'].includes(move.id)) {
+				value.set(95);
+			}
+			if (['aurasphere', 'dragonpulse'].includes(move.id)) {
+				value.set(90);
+			}
+			if (['suckerpunch', 'wickedblow'].includes(move.id)) {
+				value.set(80);
+			}
+			if (['megadrain'].includes(move.id)) {
+				value.set(75);
+			}
+			if (['grassyglide'].includes(move.id)) {
+				value.set(70);
+			}
+			if (['feint', 'tackle'].includes(move.id)) {
+				value.set(50);
+			}
+			if (['absorb'].includes(move.id)) {
+				value.set(40);
+			}
+		}
+		if (this.battle.tier.includes("Weakest")) {
+			if (['explosion'].includes(move.id)) {
+				value.set(170);
+			}
+			if (['lastresort', 'selfdestruct'].includes(move.id)) {
+				value.set(130);
+			}
+			if (['chloroblast', 'doomdesire'].includes(move.id)) {
+				value.set(120);
+			}
+			if (['doubleedge', 'headlongrush', 'skullbash', 'zapcannon'].includes(move.id)) {
+				value.set(100);
+			}
+			if (['bleakwindstorm', 'sandsearstorm', 'springtidestorm', 'wildboltstorm'].includes(move.id)) {
+				value.set(95);
+			}
+			if (['crabhammer', 'multiattack', 'outrage', 'ragingfury', 'thrash'].includes(move.id)) {
+				value.set(90);
+			}
+			if (['highjumpkick', 'technoblast'].includes(move.id)) {
+				value.set(85);
+			}
+			if (['energyball', 'flyingpress', 'futuresight'].includes(move.id)) {
+				value.set(80);
+			}
+			if (['esperwing', 'wavecrash'].includes(move.id)) {
+				value.set(75);
+			}
+			if (['fly', 'jumpkick', 'leafblade', 'lusterpurge', 'mistball', 'petaldance', 'powergem', 'synchronoise'].includes(move.id)) {
+				value.set(70);
+			}
+			if (['mysticalfire'].includes(move.id)) {
+				value.set(65);
+			}
+			if (['bittermalice', 'chatter', 'dig', 'direclaw', 'dive', 'drainpunch', 'gigadrain', 'lowsweep', 'smellingsalts', 'wakeupslap'].includes(move.id)) {
+				value.set(60);
+			}
+			if (['aircutter', ''].includes(move.id)) {
+				value.set(55);
+			}
+			if (['assurance', 'firepledge', 'grasspledge', 'hex', 'paraboliccharge', 'rocktomb', 'triplearrows', 'uproar', 'waterpledge'].includes(move.id)) {
+				value.set(50);
+			}
+			if (['frostbreath', 'snore', 'stormthrow', 'thief'].includes(move.id)) {
+				value.set(40);
+			}
+			if (['tackle', 'vinewhip', 'wingattack'].includes(move.id)) {
+				value.set(35);
+			}
+			if (['fellstinger', 'incinerate', 'strugglebug'].includes(move.id)) {
+				value.set(30);
+			}
+			if (['covet'].includes(move.id)) {
+				value.set(25);
+			}
+			if (['bubble', 'knockoff', 'lick', 'rapidspin', 'rocksmash', 'smog'].includes(move.id)) {
+				value.set(20);
+			}
+			if (['firespin', 'sandtomb', 'whirlpool'].includes(move.id)) {
+				value.set(15);
+			}
+			if (['pinmissile'].includes(move.id)) {
+				value.set(14);
+			}
+			if (['bulletseed', 'furycutter', 'iciclespear'].includes(move.id)) {
+				value.set(10);
+			}
+		}
+		
 		// Moves that check opponent speed
 		if (move.id === 'electroball' && target) {
 			let [minSpe, maxSpe] = this.getSpeedRange(target);
@@ -1937,7 +2102,6 @@ class BattleTooltips {
 		if (this.battle.tier.includes("Strongest")) {
 			if (move.type === 'Normal') {
 				value.abilityModify(1.3, "Aerilate");
-				value.abilityModify(1.3, "Galvanize");
 				value.abilityModify(1.3, "Pixilate");
 				value.abilityModify(1.3, "Refrigerate");
 			}
@@ -1990,8 +2154,6 @@ class BattleTooltips {
 					auraBoosted = 'Dark Aura';
 				} else if (allyAbility === 'Aura Break') {
 					auraBroken = true;
-				} else if (allyAbility === 'Aura Break' && moveType === 'Ground' && this.battle.tier.includes("New Region")) {
-					auraBoosted = 'Aura Break';
 				} else if (allyAbility === 'Battery' && ally !== pokemon && move.category === 'Special') {
 					value.modify(1.3, 'Battery');
 				} else if (allyAbility === 'Power Spot' && ally !== pokemon) {
@@ -2006,8 +2168,6 @@ class BattleTooltips {
 					auraBoosted = 'Fairy Aura';
 				} else if (foe.ability === 'Dark Aura' && moveType === 'Dark') {
 					auraBoosted = 'Dark Aura';
-				} else if (foe.ability === 'Aura Break' && moveType === 'Ground' && this.battle.tier.includes("New Region")) {
-					auraBoosted = 'Aura Break';
 				} else if (foe.ability === 'Aura Break') {
 					auraBroken = true;
 				}
@@ -2154,14 +2314,29 @@ class BattleTooltips {
 			return value;
 		}
 
+		if (this.battle.tier.includes("Weakest")) {
+			if (BattleTooltips.itemTypes[item.name] === moveType && itemName !== 'Fairy Feather') {
+				value.itemModify(1.1);
+				return value;
+			}
+			if (BattleTooltips.incenseTypes[item.name] === moveType && itemName !== 'Sea Incense') {
+				value.itemModify(1.2);
+				return value;
+			}
+			if (itemName === 'Sea Incense') {
+				value.itemModify(1.05);
+				return value;
+			}
+		}
+
 		// Incenses
-		if (BattleTooltips.incenseTypes[item.name] === moveType) {
+		if (BattleTooltips.incenseTypes[item.name] === moveType && !this.battle.tier.includes("Weakest")) {
 			value.itemModify(1.2);
 			return value;
 		}
 
 		// Type-enhancing items
-		if (BattleTooltips.itemTypes[item.name] === moveType) {
+		if (BattleTooltips.itemTypes[item.name] === moveType && !this.battle.tier.includes("Weakest")) {
 			value.itemModify(this.battle.gen < 4 ? 1.1 : 1.2);
 			return value;
 		}
@@ -2173,7 +2348,7 @@ class BattleTooltips {
 		}
 
 		// Pokemon-specific items
-		if (item.name === 'Soul Dew' && (this.battle.gen < 7 || !this.battle.tier.includes("Strongest"))) return value;
+		if (item.name === 'Soul Dew' && (this.battle.gen < 7 || this.battle.tier.includes("Strongest"))) return value;
 		if (BattleTooltips.orbUsers[speciesName]?.includes(item.name) &&
 			BattleTooltips.orbTypes[item.name]?.includes(moveType)) {
 			value.itemModify(1.2);
