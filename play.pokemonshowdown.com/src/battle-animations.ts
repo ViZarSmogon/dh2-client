@@ -1921,6 +1921,7 @@ export class PokemonSprite extends Sprite {
 		perish3: ['Perish in 3', 'bad'],
 		airballoon: ['Balloon', 'good'],
 		leechseed: ['Leech Seed', 'bad'],
+		mortaldrain: ['Mortal Drain', 'bad'],// New Region
 		encore: ['Encore', 'bad'],
 		mustrecharge: ['Must recharge', 'bad'],
 		bide: ['Bide', 'good'],
@@ -1995,27 +1996,12 @@ export class PokemonSprite extends Sprite {
 		thundercage: ['Thunder Cage', 'bad'],
 		whirlpool: ['Whirlpool', 'bad'],
 		wrap: ['Wrap', 'bad'],
+		dragonspeer: ['Dragon Speer', 'bad'],// New Region
 		// Gen 1-2
 		mist: ['Mist', 'good'],
 		// Gen 1
 		lightscreen: ['Light Screen', 'good'],
-		reflect: ['Reflect', 'good'],
-		
-		dragonmightatk: ['Dragon Might: Atk', 'good'],
-		dragonmightdef: ['Dragon Might: Def', 'good'],
-		dragonmightspa: ['Dragon Might: SpA', 'good'],
-		dragonmightspd: ['Dragon Might: SpD', 'good'],
-		dragonmightspe: ['Dragon Might: Spe', 'good'],
-		weaponryatk: ['Weaponry: Atk', 'good'],
-		weaponrydef: ['Weaponry: Def', 'good'],
-		weaponryspa: ['Weaponry: SpA', 'good'],
-		weaponryspd: ['Weaponry: SpD', 'good'],
-		weaponryspe: ['Weaponry: Spe', 'good'],
-		obey: ['Obey', 'bad'],
-		vinepull: ['Vine Pull', 'bad'],
-		reposition: ['Re-Position', 'neutral'],
-		mortaldrain: ['Mortal Drain', 'bad'],
-		dragonspeer: ['Dragon Speer', 'bad'],
+		reflect: ['Reflect', 'good'],		
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;
