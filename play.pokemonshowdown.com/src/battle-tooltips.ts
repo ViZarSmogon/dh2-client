@@ -1872,16 +1872,14 @@ class BattleTooltips {
 			value.weatherModify(1.5, 'Sunny Day');
 		}
 		if (this.battle.tier.includes("New Region")) {
-			if (weather) {
-				if ((this.battle.weather === 'sunnyday' && moveType === 'Fire') ||
-					(this.battle.weather === 'raindance' && moveType === 'Water')) {
-					value.weatherModify(1.3, 'Weather');
-				}
-				if ((this.battle.weather === 'sunnyday' && moveType === 'Water' && move.id !== 'hydrosteam') ||
-					(this.battle.weather === 'raindance' && moveType === 'Fire') ||
-					(this.battle.weather === 'sandstorm' && moveType === 'Electric')) {
-					value.weatherModify(0.75, 'Weather');
-				}
+			if ((this.battle.weather === 'sunnyday' && moveType === 'Fire') ||
+				(this.battle.weather === 'raindance' && moveType === 'Water')) {
+				value.weatherModify(1.3, 'Weather');
+			}
+			if ((this.battle.weather === 'sunnyday' && moveType === 'Water' && move.id !== 'hydrosteam') ||
+				(this.battle.weather === 'raindance' && moveType === 'Fire') ||
+				(this.battle.weather === 'sandstorm' && moveType === 'Electric')) {
+				value.weatherModify(0.75, 'Weather');
 			}
 			if (move.id === 'rocksmash') {
 				const sideConditions = this.battle.mySide.sideConditions;
