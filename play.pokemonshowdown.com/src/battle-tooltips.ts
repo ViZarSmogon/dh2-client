@@ -1204,18 +1204,13 @@ class BattleTooltips {
 					// Pokemon with Hisui evolutions
 					evoSpecies.isNonstandard === "Unobtainable";
 		});
-		if (item === 'eviolite' && (isNFE || this.battle.dex.species.get(serverPokemon.speciesForme).id === 'dipplin') && !this.battle.tier.includes("New Region")) {
+		if (item === 'eviolite' && isNFE) {
 			stats.def = Math.floor(stats.def * 1.5);
 			stats.spd = Math.floor(stats.spd * 1.5);
 		}
 		
 		if (this.battle.tier.includes("New Region")) {
-			let species = this.battle.dex.species.get(serverPokemon.speciesForme);
-			if (item === 'eviolite' && (isNFE || ['sandslash', 'banette', 'tauros', 'grapploct', 'cherrim', 'zebstrika', 'sableye', 'kosmeye', 'mawile', 'sagwile', 'zangoose', 'seviper'].includes(species.id))) {
-				stats.def = Math.floor(stats.def * 1.5);
-				stats.spd = Math.floor(stats.spd * 1.5);
-			}
-			if (ability === 'maternalguard' && (isNFE || ['sandslash', 'banette', 'tauros', 'grapploct', 'cherrim', 'zebstrika', 'sableye', 'kosmeye', 'mawile', 'sagwile', 'zangoose', 'seviper'].includes(species.id))) {
+			if (ability === 'maternalguard' && isNFE) {
 				stats.def = Math.floor(stats.def * 1.3);
 				stats.spd = Math.floor(stats.spd * 1.3);
 			}
@@ -1279,22 +1274,38 @@ class BattleTooltips {
 		}
 		if (this.battle.abilityActive('Vessel of Ruin')) {
 			if (ability !== 'vesselofruin') {
-				stats.spa = Math.floor(stats.spa * 0.75);
+				if (this.battle.tier.includes("New Region")) {
+					stats.spa = Math.floor(stats.spa * 0.9);
+				} else {
+					stats.spa = Math.floor(stats.spa * 0.75);
+				}
 			}
 		}
 		if (this.battle.abilityActive('Sword of Ruin')) {
 			if (ability !== 'swordofruin') {
-				stats.def = Math.floor(stats.def * 0.75);
+				if (this.battle.tier.includes("New Region")) {
+					stats.def = Math.floor(stats.def * 0.9);
+				} else {
+					stats.def = Math.floor(stats.def * 0.75);
+				}
 			}
 		}
 		if (this.battle.abilityActive('Tablets of Ruin')) {
 			if (ability !== 'tabletsofruin') {
-				stats.atk = Math.floor(stats.atk * 0.75);
+				if (this.battle.tier.includes("New Region")) {
+					stats.atk = Math.floor(stats.atk * 0.9);
+				} else {
+					stats.atk = Math.floor(stats.atk * 0.75);
+				}
 			}
 		}
 		if (this.battle.abilityActive('Beads of Ruin')) {
 			if (ability !== 'beadsofruin') {
-				stats.spd = Math.floor(stats.spd * 0.75);
+				if (this.battle.tier.includes("New Region")) {
+					stats.spd = Math.floor(stats.spd * 0.9);
+				} else {
+					stats.spd = Math.floor(stats.spd * 0.75);
+				}
 			}
 		}
 		const sideConditions = this.battle.mySide.sideConditions;
@@ -1924,39 +1935,6 @@ class BattleTooltips {
 			value.set(20, 'Battle Bond');
 		}
 		
-		//Custon Move BP
-		/*if (this.battle.tier.includes("New Region")) {
-			if (move.id === 'roaroftime') {
-				if (pokemon.getSpeciesForme() === 'Dialga-Origin') {
-					value.set(150, 'Dialga-Origin');
-				} else {
-					value.set(120);
-				}
-			} else if (move.id === 'astralbarrage' || move.id === 'glaciallance') {
-				value.set(100);
-			} else if (move.id === 'brickbreak' || move.id === 'psychicfangs' || move.id === 'squalluppercut' || move.id === 'spectralfang') {
-				value.set(90);
-			} else if (move.id === 'firepunch' || move.id === 'icepunch' || move.id === 'thunderpunch' || move.id === 'dragonspeer') {
-				value.set(85);
-			} else if (move.id === 'astonish') {
-				value.set(80);
-			} else if (move.id === 'firefang' || move.id === 'icefang' || move.id === 'thunderfang') {
-				value.set(75);
-			} else if (move.id === 'boltbeak' || move.id === 'fishiousrend' || move.id === 'steeltrunk') {
-				value.set(65);
-			} else if (move.id === 'wickedblow' || move.id === 'quickdodge') {
-				value.set(60);
-			} else if (move.id === 'firespin' || move.id === 'sandtomb' || move.id === 'whirlpool' || move.id === 'rocksmash') {
-				value.set(50);
-			} else if (move.id === 'jostle' || move.id === 'threedash') {
-				value.set(30);
-			} else if (move.id === 'surgingstrikes' || move.id === 'plaguewave') {
-				value.set(20);
-			} else if (move.id === 'octowhip') {
-				value.set(10);
-			}
-		}*/
-		
 		// Moves that check opponent speed
 		if (move.id === 'electroball' && target) {
 			let [minSpe, maxSpe] = this.getSpeedRange(target);
@@ -2346,9 +2324,9 @@ class BattleTooltips {
 			value.itemModify(1.2);
 			return value;
 		}
-		if ((speciesName.startsWith('Ogerpon-Wellspring') && itemName === 'Wellspring Mask') ||
-			(speciesName.startsWith('Ogerpon-Hearthflame') && itemName === 'Hearthflame Mask') ||
-			(speciesName.startsWith('Ogerpon-Cornerstone') && itemName === 'Cornerstone Mask')) {
+		if (((pokemon.getSpeciesForme() === 'Ogerpon-Wellspring' || pokemon.getSpeciesForme() === 'Ogerpon-Wellspring-Tera') && itemName === 'Wellspring Mask') ||
+			((pokemon.getSpeciesForme() === 'Ogerpon-Hearthflame' || pokemon.getSpeciesForme() === 'Ogerpon-Hearthflame-Tera') && itemName === 'Hearthflame Mask') ||
+			((pokemon.getSpeciesForme() === 'Ogerpon-Cornerstone' || pokemon.getSpeciesForme() === 'Ogerpon-Cornerstone-Tera') && itemName === 'Cornerstone Mask')) {
 			if (this.battle.tier.includes("New Region")) {
 				value.itemModify(1.1);
 				return value;
@@ -2369,6 +2347,12 @@ class BattleTooltips {
 			itemName === 'Wise Glasses' && move.category === 'Special' ||
 			itemName === 'Punching Glove' && move.flags['punch'])) {
 			value.itemModify(1.1);
+		}
+		if (this.battle.tier.includes("New Region")) {
+			if (itemName === 'Big Root' && move.flags['drain']
+			) {
+				value.itemModify(1.3);
+			}
 		}
 		/*if (this.battle.tier.includes("New Region")) {
 			if (itemName === 'Loaded Dice' && move.multihit ||
