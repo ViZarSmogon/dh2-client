@@ -2354,9 +2354,9 @@ class BattleTooltips {
 			value.itemModify(1.2);
 			return value;
 		}
-		if (((pokemon.getSpeciesForme() === 'Ogerpon-Wellspring' || pokemon.getSpeciesForme() === 'Ogerpon-Wellspring-Tera') && itemName === 'Wellspring Mask') ||
-			((pokemon.getSpeciesForme() === 'Ogerpon-Hearthflame' || pokemon.getSpeciesForme() === 'Ogerpon-Hearthflame-Tera') && itemName === 'Hearthflame Mask') ||
-			((pokemon.getSpeciesForme() === 'Ogerpon-Cornerstone' || pokemon.getSpeciesForme() === 'Ogerpon-Cornerstone-Tera') && itemName === 'Cornerstone Mask')) {
+		if ((speciesName.startsWith('Ogerpon-Wellspring') && itemName === 'Wellspring Mask') ||
+			(speciesName.startsWith('Ogerpon-Hearthflame') && itemName === 'Hearthflame Mask') ||
+			(speciesName.startsWith('Ogerpon-Cornerstone') && itemName === 'Cornerstone Mask')) {
 			value.itemModify(1.2);
 			return value;
 		}
