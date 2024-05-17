@@ -1072,15 +1072,24 @@ class BattleTooltips {
 			}
 		}
 
-		if (speciesName === 'Ditto' && !(clientPokemon && 'transform' in clientPokemon.volatiles)) {
-			if (item === 'quickpowder') {
-				speedModifiers.push(2);
-			}
-			if (item === 'metalpowder') {
-				if (this.battle.gen === 2) {
-					stats.def = Math.floor(stats.def * 1.5);
-					stats.spd = Math.floor(stats.spd * 1.5);
-				} else {
+		if (speciesName === 'Ditto') {
+			if (!(clientPokemon && 'transform' in clientPokemon.volatiles) && !this.battle.tier.includes("New Region")) {
+				if (item === 'quickpowder') {
+					speedModifiers.push(2);
+				}
+				if (item === 'metalpowder') {
+					if (this.battle.gen === 2) {
+						stats.def = Math.floor(stats.def * 1.5);
+						stats.spd = Math.floor(stats.spd * 1.5);
+					} else {
+						stats.def *= 2;
+					}
+				}
+			} else if (this.battle.tier.includes("New Region")) {
+				if (item === 'quickpowder') {
+					speedModifiers.push(2);
+				}
+				if (item === 'metalpowder') {
 					stats.def *= 2;
 				}
 			}
@@ -1106,20 +1115,7 @@ class BattleTooltips {
 		if (ability === 'hustle' || (ability === 'gorillatactics' && !clientPokemon?.volatiles['dynamax'])) {
 			stats.atk = Math.floor(stats.atk * 1.5);
 		}
-		if (this.battle.hasPseudoWeather('Grassy Terrain') && this.battle.tier.includes("New Region") && pokemon.isGrounded(serverPokemon)) {
-			if (!this.pokemonHasType(pokemon, 'Bug') && !this.pokemonHasType(pokemon, 'Grass')) {
-				stats.spa = Math.floor(stats.spa * 0.75);
-			}
-		}
 		if (weather) {
-			if (this.battle.tier.includes("New Region")) {
-				if (this.pokemonHasType(pokemon, 'Grass') && weather === 'sunnyday') {
-					stats.spd = Math.floor(stats.spd * 1.5);
-				}
-				if (this.pokemonHasType(pokemon, 'Grass') && weather === 'raindance') {
-					stats.def = Math.floor(stats.def * 1.5);
-				}
-			}
 			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm') {
 				stats.spd = Math.floor(stats.spd * 1.5);
 			}
@@ -1192,6 +1188,13 @@ class BattleTooltips {
 						stats[statName] = Math.floor(stats[statName] * 1.3);
 					}
 				}
+				if (clientPokemon.volatiles['rulingclass' + statName] && this.battle.tier.includes("New Region")) {
+					if (statName === 'spe') {
+						speedModifiers.push(2);
+					} else {
+						stats[statName] = Math.floor(stats[statName] * 2);
+					}
+				}
 			}
 		}
 		if (ability === 'marvelscale' && pokemon.status) {
@@ -1211,11 +1214,8 @@ class BattleTooltips {
 		
 		if (this.battle.tier.includes("New Region")) {
 			if (ability === 'maternalguard' && isNFE) {
-				stats.def = Math.floor(stats.def * 1.3);
-				stats.spd = Math.floor(stats.spd * 1.3);
-			}
-			if (['psn', 'tox'].includes(pokemon.status) && ability === 'venommaster') {
-				stats.atk = Math.floor(stats.atk * 1.3);
+				stats.def = Math.floor(stats.def * 1.5);
+				stats.spd = Math.floor(stats.spd * 1.5);
 			}
 		}
 		if (ability === 'grasspelt' && this.battle.hasPseudoWeather('Grassy Terrain')) {
@@ -1559,43 +1559,7 @@ class BattleTooltips {
 				break;
 			}
 		}
-		/*if (this.battle.tier.includes("New Region")) {
-			switch (move.id) {
-			case 'quickdodge':
-				moveType = 'Bug';
-				break;
-			case 'evilscheme':
-			case 'jostle':
-				moveType = 'Dark';
-				break;
-			case 'dragonspeer':
-				moveType = 'Dragon';
-				break;
-			case 'threedash':
-				moveType = 'Fighting';
-				break;
-			case 'squalluppercut':
-				moveType = 'Flying';
-				break;
-			case 'mortaldrain':
-			case 'spectralfang':
-				moveType = 'Ghost';
-				break;
-			case 'frostbite':
-				moveType = 'Ice';
-				break;
-			case 'plaguewave':
-				moveType = 'Poison'
-				break;
-			case 'steeltrunk':
-				moveType = 'Steel';
-				break;
-			case 'octowhip':
-				moveType = 'Water';
-				break;
-			}
-		}*/
-
+		
 		// Other abilities that change the move type.
 		const noTypeOverride = [
 			'judgment', 'multiattack', 'naturalgift', 'revelationdance', 'struggle', 'technoblast', 'terrainpulse', 'weatherball',
@@ -1636,8 +1600,16 @@ class BattleTooltips {
 			const stats = this.calculateModifiedStats(pokemon, serverPokemon, true);
 			if (stats.atk > stats.spa) category = 'Physical';
 		}
-		if (this.battle.tier.includes("New Region") && move.id === 'somapunches') {
-			category = 'Special';
+		if (this.battle.tier.includes("New Region")) {
+			const stats = this.calculateModifiedStats(pokemon, serverPokemon, true);
+			if (stats.atk < stats.spa && move.id === 'somapunches') category = 'Special';
+			if (item.id === 'benefitterring') {
+				if (stats.atk >= stats.spa) {
+					category = 'Physical';
+				} else {
+					category = 'Special';
+				}
+			}
 		}
 		return [moveType, category];
 	}
@@ -1688,19 +1660,7 @@ class BattleTooltips {
 
 		// Accuracy modifiers start
 
-		let accuracyModifiers = [];
-		if (this.battle.tier.includes("New Region")) {
-			if (this.battle.hasPseudoWeather('Misty Terrain')) {
-				if (pokemon ? pokemon.isGrounded() : true) {
-					accuracyModifiers.push(5120);
-					value.modify(1.25, "Misty Terrain");
-				}
-			}
-			if (move.id === 'steeltrunk') {
-				value.set(90);
-			}
-		}
-		
+		let accuracyModifiers = [];		
 		if (this.battle.hasPseudoWeather('Gravity')) {
 			accuracyModifiers.push(6840);
 			value.modify(5 / 3, "Gravity");
@@ -1913,6 +1873,31 @@ class BattleTooltips {
 			if (move.id === 'heavybreeze') {
 				if (this.battle.weather !== 'deltastream') {
 					value.weatherModify(1.5);
+				}
+			}
+			if (move.id === 'fieldstrike') {
+				if (this.battle.weather !== 'deltastream') {
+					value.weatherModify(1.5);
+				}
+			}
+			if (move.id === 'fieldstrike' && pokemon.isGrounded(serverPokemon)) {
+				if (
+					this.battle.hasPseudoWeather('Electric Terrain') ||
+					this.battle.hasPseudoWeather('Grassy Terrain') ||
+					this.battle.hasPseudoWeather('Misty Terrain') ||
+					this.battle.hasPseudoWeather('Psychic Terrain')
+				) {
+					value.modify(1.5, 'Terrain boost');
+				}
+			}
+			if (move.id === 'softenup' && pokemon.isGrounded(serverPokemon)) {
+				if (
+					this.battle.hasPseudoWeather('Electric Terrain') ||
+					this.battle.hasPseudoWeather('Grassy Terrain') ||
+					this.battle.hasPseudoWeather('Misty Terrain') ||
+					this.battle.hasPseudoWeather('Psychic Terrain')
+				) {
+					value.modify(1.5, 'Terrain boost');
 				}
 			}
 		}
@@ -2162,14 +2147,7 @@ class BattleTooltips {
 		// Terrain
 		if (((this.battle.hasPseudoWeather('Electric Terrain') && moveType === 'Electric') ||
 			(this.battle.hasPseudoWeather('Grassy Terrain') && moveType === 'Grass') ||
-			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Psychic')) && this.battle.tier.includes("New Region")) {
-			if (pokemon.isGrounded(serverPokemon)) {
-				value.modify(1.2, 'Terrain boost');
-			}
-		}
-		if (((this.battle.hasPseudoWeather('Electric Terrain') && moveType === 'Electric') ||
-			(this.battle.hasPseudoWeather('Grassy Terrain') && moveType === 'Grass') ||
-			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Psychic')) && !this.battle.tier.includes("New Region")) {
+			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Psychic'))) {
 			if (pokemon.isGrounded(serverPokemon)) {
 				value.modify(this.battle.gen > 7 ? 1.3 : 1.5, 'Terrain boost');
 			}
@@ -2324,9 +2302,9 @@ class BattleTooltips {
 			value.itemModify(1.2);
 			return value;
 		}
-		if (((pokemon.getSpeciesForme() === 'Ogerpon-Wellspring' || pokemon.getSpeciesForme() === 'Ogerpon-Wellspring-Tera') && itemName === 'Wellspring Mask') ||
-			((pokemon.getSpeciesForme() === 'Ogerpon-Hearthflame' || pokemon.getSpeciesForme() === 'Ogerpon-Hearthflame-Tera') && itemName === 'Hearthflame Mask') ||
-			((pokemon.getSpeciesForme() === 'Ogerpon-Cornerstone' || pokemon.getSpeciesForme() === 'Ogerpon-Cornerstone-Tera') && itemName === 'Cornerstone Mask')) {
+		if ((speciesName.startsWith('Ogerpon-Wellspring') && itemName === 'Wellspring Mask') ||
+			(speciesName.startsWith('Ogerpon-Hearthflame') && itemName === 'Hearthflame Mask') ||
+			(speciesName.startsWith('Ogerpon-Cornerstone') && itemName === 'Cornerstone Mask')) {
 			if (this.battle.tier.includes("New Region")) {
 				value.itemModify(1.1);
 				return value;

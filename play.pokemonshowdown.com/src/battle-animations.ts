@@ -1997,6 +1997,11 @@ export class PokemonSprite extends Sprite {
 		whirlpool: ['Whirlpool', 'bad'],
 		wrap: ['Wrap', 'bad'],
 		dragonspeer: ['Dragon Speer', 'bad'],// New Region
+		rulingclassatk: ['Ruling Class: Atk', 'good'],// New Region
+		rulingclassdef: ['Ruling Class: Def', 'good'],// New Region
+		rulingclassspa: ['Ruling Class: SpA', 'good'],// New Region
+		rulingclassspd: ['Ruling Class: SpD', 'good'],// New Region
+		rulingclassspe: ['Ruling Class: Spe', 'good'],// New Region
 		// Gen 1-2
 		mist: ['Mist', 'good'],
 		// Gen 1
