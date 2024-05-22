@@ -1562,7 +1562,7 @@ class BattleTooltips {
 
 		let pokemon = value.pokemon!;
 		// Sure-hit accuracy
-		if (this.battle.tier.includes("Strongest")) {
+		/*if (this.battle.tier.includes("Strongest")) {
 			if (['memento', 'nightmare'].includes(move.id)) {
 				value.set(0);
 			}
@@ -1607,7 +1607,7 @@ class BattleTooltips {
 			if (['disable', 'poisongas'].includes(move.id)) {
 				value.set(55);
 			}
-		}
+		}*/
 		
 		if (move.id === 'toxic' && this.battle.gen >= 6 && this.pokemonHasType(pokemon, 'Poison')) {
 			value.set(0, "Poison type");
