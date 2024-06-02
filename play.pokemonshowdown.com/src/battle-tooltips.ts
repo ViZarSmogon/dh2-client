@@ -1883,7 +1883,7 @@ class BattleTooltips {
 			value.abilityModify(1.5, "Flare Boost");
 		}
 		if (move.flags['punch']) {
-			value.abilityModify(1.2, 'Iron Fist' && !this.battle.tier.includes("Buff Mania"));
+			value.abilityModify(1.2, 'Iron Fist');
 		}
 		if (move.flags['pulse']) {
 			value.abilityModify(1.5, "Mega Launcher");
@@ -1932,7 +1932,7 @@ class BattleTooltips {
 			move.category !== 'Status' && allowTypeOverride && !move.isZ && !move.isMax &&
 			!move.id.startsWith('hiddenpower')
 		) {
-			if (move.type === 'Normal' && !this.battle.tier.includes("Buff Mania") && !this.battle.tier.includes("Strongest")) {
+			if (move.type === 'Normal' && !this.battle.tier.includes("Strongest")) {
 				value.abilityModify(this.battle.gen > 6 ? 1.2 : 1.3, "Aerilate");
 				value.abilityModify(this.battle.gen > 6 ? 1.2 : 1.3, "Galvanize");
 				value.abilityModify(this.battle.gen > 6 ? 1.2 : 1.3, "Pixilate");
@@ -1953,41 +1953,6 @@ class BattleTooltips {
 			}
 		}
 		
-		if (this.battle.tier.includes("Buff Mania")) {
-			if (move.type === 'Bug' && pokemon.hp > pokemon.maxhp / 3) {
-				value.abilityModify(1.2, 'Swarm');
-			} else if (pokemon.hp <= pokemon.maxhp / 3) {
-				value.abilityModify(1.5, 'Swarm');
-			}
-			
-			if (move.type === 'Fire' && pokemon.hp > pokemon.maxhp / 3) {
-				value.abilityModify(1.2, 'Blaze');
-			} else if (pokemon.hp <= pokemon.maxhp / 3) {
-				value.abilityModify(1.5, 'Blaze');
-			}
-			
-			if (move.type === 'Grass' && pokemon.hp > pokemon.maxhp / 3) {
-				value.abilityModify(1.2, 'Overgrow');
-			} else if (pokemon.hp <= pokemon.maxhp / 3) {
-				value.abilityModify(1.5, 'Overgrow');
-			}
-			
-			if (move.type === 'Water' && pokemon.hp > pokemon.maxhp / 3) {
-				value.abilityModify(1.2, 'Torrent');
-			} else if (pokemon.hp <= pokemon.maxhp / 3) {
-				value.abilityModify(1.5, 'Torrent');
-			}
-			if (move.flags['punch']) {
-				value.abilityModify(1.5, 'Iron Fist');
-			}
-			if (move.type === 'Normal') {
-				value.abilityModify(1.3, "Aerilate");
-				value.abilityModify(1.3, "Galvanize");
-				value.abilityModify(1.3, "Pixilate");
-				value.abilityModify(1.3, "Refrigerate");
-			}
-		}
-
 		if (move.category !== 'Status') {
 			let auraBoosted = '';
 			let auraBroken = false;
