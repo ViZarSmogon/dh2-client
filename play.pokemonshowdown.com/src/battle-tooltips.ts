@@ -1188,15 +1188,9 @@ class BattleTooltips {
 						stats[statName] = Math.floor(stats[statName] * 1.3);
 					}
 				}
-				if (clientPokemon.volatiles['rulingclass' + statName] && this.battle.tier.includes("New Region")) {
-					if (statName === 'spe') {
-						speedModifiers.push(2);
-					} else {
-						stats[statName] = Math.floor(stats[statName] * 2);
-					}
-				}
 			}
 		}
+		
 		if (ability === 'marvelscale' && pokemon.status) {
 			stats.def = Math.floor(stats.def * 1.5);
 		}
@@ -1210,13 +1204,6 @@ class BattleTooltips {
 		if (item === 'eviolite' && isNFE) {
 			stats.def = Math.floor(stats.def * 1.5);
 			stats.spd = Math.floor(stats.spd * 1.5);
-		}
-		
-		if (this.battle.tier.includes("New Region")) {
-			if (ability === 'maternalguard' && isNFE) {
-				stats.def = Math.floor(stats.def * 1.5);
-				stats.spd = Math.floor(stats.spd * 1.5);
-			}
 		}
 		if (ability === 'grasspelt' && this.battle.hasPseudoWeather('Grassy Terrain')) {
 			stats.def = Math.floor(stats.def * 1.5);
@@ -1331,6 +1318,12 @@ class BattleTooltips {
 				stats.spe = Math.floor(stats.spe * 0.5);
 			} else {
 				stats.spe = Math.floor(stats.spe * 0.25);
+			}
+		}
+		if (this.battle.tier.includes("New Region")) {
+			if (pokemon.status === 'slp') {
+				stats.def = Math.floor(stats.def * 1.5);
+				stats.spd = Math.floor(stats.spd * 1.5);
 			}
 		}
 
@@ -1599,17 +1592,6 @@ class BattleTooltips {
 			move.id === 'terablast' && pokemon.terastallized) {
 			const stats = this.calculateModifiedStats(pokemon, serverPokemon, true);
 			if (stats.atk > stats.spa) category = 'Physical';
-		}
-		if (this.battle.tier.includes("New Region")) {
-			const stats = this.calculateModifiedStats(pokemon, serverPokemon, true);
-			if (stats.atk < stats.spa && move.id === 'somapunches') category = 'Special';
-			if (item.id === 'benefitterring') {
-				if (stats.atk >= stats.spa) {
-					category = 'Physical';
-				} else {
-					category = 'Special';
-				}
-			}
 		}
 		return [moveType, category];
 	}
@@ -2067,39 +2049,13 @@ class BattleTooltips {
 			value.abilityModify(1.2, 'Reckless');
 		}
 		if (this.battle.tier.includes("New Region")) {
-			const multiplier = Math.floor((2 - pokemon.hp / pokemon.maxhp) * 100) / 100;
-			if (move.flags['sound']) {
-				value.abilityModify(1.3, "Liquid Voice");
-			} 
-			if (move.type === 'Bug' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Swarm');
-			}
-			if (move.type === 'Fire' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Blaze');
-			}
-			if (move.type === 'Grass' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Overgrow');
-			}
-			if (move.type === 'Water' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Torrent');
-			}
-			if (move.type === 'Poison' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Stench');
-			}
-			if (move.type === 'Electric' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Transistor');
-			}
-			if (move.type === 'Dragon' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Dragon\s Maw');
-			}
-			if (move.type === 'Steel' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Steelworker');
-			}
-			if (move.type === 'Rock' && pokemon.hp !== pokemon.maxhp) {
-				value.abilityModify(pokemon.hp === 1 ? 2 : multiplier, 'Rocky Payload');
-			}
-			if (!move.flags['contact']) {
-				value.abilityModify(1.25, "Long Reach");
+			const light = [
+				'aurorabeam', 'bubblebeam', 'dazzlinggleam', 'flashcannon', 'icebeam', 'lightofruin', 
+				'luminacrash', 'meteorbeam', 'moongeistbeam', 'photongeyser', 'powergem', 'prismaticlaser', 
+				'psybeam', 'signalbeam', 'solarbeam', 'solarblade', 'steelbeam', 'sunsteelstrike',
+			];
+			if (light.includes(move.id)) {
+				value.abilityModify(1.3, 'Illuminate');
 			}
 		}
 
@@ -2121,8 +2077,6 @@ class BattleTooltips {
 					value.modify(1.3, 'Power Spot');
 				} else if (allyAbility === 'Steely Spirit' && moveType === 'Steel') {
 					value.modify(1.5, 'Steely Spirit');
-				} else if (this.battle.tier.includes("New Region") && allyAbility === 'Flower Gift' && moveType === 'Grass') {
-					value.modify(1.5, 'Flower Gift');
 				}
 			}
 			for (const foe of pokemon.side.foe.active) {
@@ -2193,7 +2147,7 @@ class BattleTooltips {
 		if (this.battle.gen > 2 && serverPokemon.status === 'brn' && move.id !== 'facade' && move.category === 'Physical') {
 			if (!value.tryAbility("Guts")) value.modify(0.5, 'Burn');
 		}
-		if (this.battle.tier.includes("New Region") && serverPokemon.status === 'frz' && move.category === 'Special') {
+		if (serverPokemon.status === 'frz' && move.category === 'Special' && this.battle.tier.includes("New Region")) {
 			value.modify(0.5, 'Freeze');
 		}
 
@@ -2323,27 +2277,9 @@ class BattleTooltips {
 
 		if ((itemName === 'Muscle Band' && move.category === 'Physical' ||
 			itemName === 'Wise Glasses' && move.category === 'Special' ||
-			itemName === 'Punching Glove' && move.flags['punch'])) {
+			itemName === 'Punching Glove' && move.flags['punch']) {
 			value.itemModify(1.1);
 		}
-		if (this.battle.tier.includes("New Region")) {
-			if (itemName === 'Big Root' && move.flags['drain']
-			) {
-				value.itemModify(1.3);
-			}
-		}
-		/*if (this.battle.tier.includes("New Region")) {
-			if (itemName === 'Loaded Dice' && move.multihit ||
-				itemName === 'Punching Glove' && move.flags['punch'] ||
-				itemName === 'Razor Claw' && move.flags['slicing'] ||
-				itemName === 'Razor Fang' && move.flags['bite'] ||
-				(itemName === 'Binding Band' || itemName === 'Grip Claw') && ['bind', 'clamp', 'firespin', 'infestation', 'magmastorm', 'sandtomb', 'snaptrap', 'thundercage', 'whirlpool', 'wrap'].includes(move.id) ||
-				itemName === 'King\'s Rock' && move.flags['wind']
-			) {
-				value.itemModify(1.3);
-			}
-		}*/
-
 		return value;
 	}
 	getPokemonTypes(pokemon: Pokemon | ServerPokemon, preterastallized = false): ReadonlyArray<TypeName> {
