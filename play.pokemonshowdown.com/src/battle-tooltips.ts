@@ -759,6 +759,17 @@ class BattleTooltips {
 			if (move.flags.wind) {
 				text += `<p class="movetag">&#x2713; Wind <small>(activates Wind Power and Wind Rider)</small></p>`;
 			}
+			if (this.battle.tier.includes("New Region")) {
+				const light = [
+					'aurorabeam', 'bubblebeam', 'dazzlinggleam', 'flashcannon', 'icebeam', 'lightofruin', 
+					'lightsaber', 'luminacrash', 'meteorbeam', 'moongeistbeam', 'photongeyser', 'powergem', 
+					'prismaticlaser', 'psybeam', 'signalbeam', 'solarbeam', 'solarblade', 'steelbeam', 
+					'sunsteelstrike',
+				];
+				if (light.includes(move.id)) {
+					text += `<p class="movetag">&#x2713; Light <small>(boosted by Illuminate)</small></p>`;
+				}
+			}
 		}
 		return text;
 	}
@@ -1073,7 +1084,7 @@ class BattleTooltips {
 		}
 
 		if (speciesName === 'Ditto') {
-			if (!(clientPokemon && 'transform' in clientPokemon.volatiles) && !this.battle.tier.includes("New Region")) {
+			if (!(clientPokemon && 'transform' in clientPokemon.volatiles)) {
 				if (item === 'quickpowder') {
 					speedModifiers.push(2);
 				}
@@ -1084,13 +1095,6 @@ class BattleTooltips {
 					} else {
 						stats.def *= 2;
 					}
-				}
-			} else if (this.battle.tier.includes("New Region")) {
-				if (item === 'quickpowder') {
-					speedModifiers.push(2);
-				}
-				if (item === 'metalpowder') {
-					stats.def *= 2;
 				}
 			}
 		}
@@ -1137,11 +1141,7 @@ class BattleTooltips {
 						stats.spa = Math.floor(stats.spa * 1.5);
 					}
 					if (ability === 'orichalcumpulse') {
-						if (this.battle.tier.includes("New Region")) {
-							stats.atk = Math.floor(stats.atk * 1.3);
-						} else {
-							stats.atk = Math.floor(stats.atk * 1.3333);
-						}
+						stats.atk = Math.floor(stats.atk * 1.3333);
 					}
 					let allyActive = clientPokemon?.side.active;
 					if (allyActive) {
@@ -1149,11 +1149,7 @@ class BattleTooltips {
 							if (!ally || ally.fainted) continue;
 							let allyAbility = this.getAllyAbility(ally);
 							if (allyAbility === 'Flower Gift') {
-								if (this.battle.tier.includes("New Region")) {
-									stats.atk = Math.floor(stats.atk * 1.3);
-									stats.spa = Math.floor(stats.spa * 1.3);
-									stats.spd = Math.floor(stats.spd * 1.3);
-								} else if (ally.getSpecies().baseSpecies === 'Cherrim' || this.battle.gen <= 4) {
+								if (ally.getSpecies().baseSpecies === 'Cherrim' || this.battle.gen <= 4) {
 									stats.atk = Math.floor(stats.atk * 1.5);
 									stats.spd = Math.floor(stats.spd * 1.5);
 								}
@@ -1213,11 +1209,7 @@ class BattleTooltips {
 				speedModifiers.push(2);
 			}
 			if (ability === 'hadronengine') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.spa = Math.floor(stats.spa * 1.3);
-				} else {
-					stats.spa = Math.floor(stats.spa * 1.3333);
-				}
+				stats.spa = Math.floor(stats.spa * 1.3333);
 			}
 		}
 		if (item === 'choicespecs' && !clientPokemon?.volatiles['dynamax']) {
@@ -1261,38 +1253,22 @@ class BattleTooltips {
 		}
 		if (this.battle.abilityActive('Vessel of Ruin')) {
 			if (ability !== 'vesselofruin') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.spa = Math.floor(stats.spa * 0.9);
-				} else {
-					stats.spa = Math.floor(stats.spa * 0.75);
-				}
+				stats.spa = Math.floor(stats.spa * 0.75);
 			}
 		}
 		if (this.battle.abilityActive('Sword of Ruin')) {
 			if (ability !== 'swordofruin') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.def = Math.floor(stats.def * 0.9);
-				} else {
-					stats.def = Math.floor(stats.def * 0.75);
-				}
+				stats.def = Math.floor(stats.def * 0.75);
 			}
 		}
 		if (this.battle.abilityActive('Tablets of Ruin')) {
 			if (ability !== 'tabletsofruin') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.atk = Math.floor(stats.atk * 0.9);
-				} else {
-					stats.atk = Math.floor(stats.atk * 0.75);
-				}
+				stats.atk = Math.floor(stats.atk * 0.75);
 			}
 		}
 		if (this.battle.abilityActive('Beads of Ruin')) {
 			if (ability !== 'beadsofruin') {
-				if (this.battle.tier.includes("New Region")) {
-					stats.spd = Math.floor(stats.spd * 0.9);
-				} else {
-					stats.spd = Math.floor(stats.spd * 0.75);
-				}
+				stats.spd = Math.floor(stats.spd * 0.75);
 			}
 		}
 		const sideConditions = this.battle.mySide.sideConditions;
@@ -1322,8 +1298,8 @@ class BattleTooltips {
 		}
 		if (this.battle.tier.includes("New Region")) {
 			if (pokemon.status === 'slp') {
-				stats.def = Math.floor(stats.def * 1.5);
-				stats.spd = Math.floor(stats.spd * 1.5);
+				stats.def = Math.floor(stats.def * 2);
+				stats.spd = Math.floor(stats.spd * 2);
 			}
 		}
 
@@ -1618,7 +1594,7 @@ class BattleTooltips {
 		if (!value.value) return value;
 
 		// OHKO moves don't use standard accuracy / evasion modifiers
-		if (move.ohko && !this.battle.tier.includes("New Region")) {
+		if (move.ohko) {
 			if (this.battle.gen === 1) {
 				value.set(value.value, `fails if target's Speed is higher`);
 				return value;
@@ -1769,11 +1745,7 @@ class BattleTooltips {
 			value.modify(2, move.name + ' + status');
 		}
 		if (move.id === 'lastrespects') {
-			if (this.battle.tier.includes("New Region")) {
-				value.set(Math.min(60 + 20 * pokemon.side.faintCounter));
-			} else {
-				value.set(Math.min(50 + 50 * pokemon.side.faintCounter));
-			}
+			value.set(Math.min(50 + 50 * pokemon.side.faintCounter));
 		}
 		if (move.id === 'punishment' && target) {
 			let boostCount = 0;
@@ -1825,62 +1797,19 @@ class BattleTooltips {
 			value.weatherModify(1.5, 'Sunny Day');
 		}
 		if (this.battle.tier.includes("New Region")) {
-			if ((this.battle.weather === 'sunnyday' && moveType === 'Fire') ||
-				(this.battle.weather === 'raindance' && moveType === 'Water')) {
-				value.weatherModify(1.3, 'Weather');
-			}
-			if ((this.battle.weather === 'sunnyday' && moveType === 'Water' && move.id !== 'hydrosteam') ||
-				(this.battle.weather === 'raindance' && moveType === 'Fire') ||
-				(this.battle.weather === 'sandstorm' && moveType === 'Electric')) {
-				value.weatherModify(0.75, 'Weather');
-			}
-			if (move.id === 'rocksmash') {
-				const sideConditions = this.battle.mySide.sideConditions;
-				if (sideConditions['stealthrock']) {
-					value.modify(2, 'Rock Smash + Stealth Rock');
+			if (pokemon.volatiles['powerreserve']) {
+				if (pokemon.hp >= pokemon.maxhp / 2) {
+					value.modify(1.25, 'Power Reserve');
+				} else if (pokemon.maxhp / 2 > pokemon.hp >= pokemon.maxhp / 4) {
+					value.modify(1.5, 'Power Reserve');
+				} else if (pokemon.maxhp / 4 > pokemon.hp >= pokemon.maxhp / 8) {
+					value.modify(2, 'Power Reserve');
+				} else if (pokemon.hp < pokemon.maxhp / 8) {
+					value.modify(3, 'Power Reserve');
 				}
 			}
-			if (move.id === 'guillotine' && target && target.hp * 2 <= target.maxhp) {
-				value.modify(1.5, 'Guillotine + target below half HP');
-			}
-			if (move.id === 'magneticblast' && target && this.pokemonHasType(target, 'Steel')) {
-				value.modify(2, 'Magnetic Blast + target is Steel-type');
-			}
-			if (move.id === 'lawnsweep') {
-				let Hazards = 0;
-				if (sideConditions['spikes']) Hazards++;
-				if (sideConditions['toxicspikes']) Hazards++;
-				value.set(Math.min(160, 80 + 40 * Hazards), Hazards > 0 ? `${Hazards} Hazard${Hazards > 1 ? 's' : ''} on the Ground` : undefined);
-			}
-			if (move.id === 'heavybreeze') {
-				if (this.battle.weather !== 'deltastream') {
-					value.weatherModify(1.5);
-				}
-			}
-			if (move.id === 'fieldstrike') {
-				if (this.battle.weather !== 'deltastream') {
-					value.weatherModify(1.5);
-				}
-			}
-			if (move.id === 'fieldstrike' && pokemon.isGrounded(serverPokemon)) {
-				if (
-					this.battle.hasPseudoWeather('Electric Terrain') ||
-					this.battle.hasPseudoWeather('Grassy Terrain') ||
-					this.battle.hasPseudoWeather('Misty Terrain') ||
-					this.battle.hasPseudoWeather('Psychic Terrain')
-				) {
-					value.modify(1.5, 'Terrain boost');
-				}
-			}
-			if (move.id === 'softenup' && pokemon.isGrounded(serverPokemon)) {
-				if (
-					this.battle.hasPseudoWeather('Electric Terrain') ||
-					this.battle.hasPseudoWeather('Grassy Terrain') ||
-					this.battle.hasPseudoWeather('Misty Terrain') ||
-					this.battle.hasPseudoWeather('Psychic Terrain')
-				) {
-					value.modify(1.5, 'Terrain boost');
-				}
+			if (move.id === 'magicwand') {
+				value.set(60 + 15 * pokemon.boosts.spd);
 			}
 		}
 		if (move.id === 'psyblade' && this.battle.hasPseudoWeather('Electric Terrain')) {
@@ -2051,8 +1980,9 @@ class BattleTooltips {
 		if (this.battle.tier.includes("New Region")) {
 			const light = [
 				'aurorabeam', 'bubblebeam', 'dazzlinggleam', 'flashcannon', 'icebeam', 'lightofruin', 
-				'luminacrash', 'meteorbeam', 'moongeistbeam', 'photongeyser', 'powergem', 'prismaticlaser', 
-				'psybeam', 'signalbeam', 'solarbeam', 'solarblade', 'steelbeam', 'sunsteelstrike',
+				'lightsaber', 'luminacrash', 'meteorbeam', 'moongeistbeam', 'photongeyser', 'powergem', 
+				'prismaticlaser', 'psybeam', 'signalbeam', 'solarbeam', 'solarblade', 'steelbeam', 
+				'sunsteelstrike',
 			];
 			if (light.includes(move.id)) {
 				value.abilityModify(1.3, 'Illuminate');
@@ -2259,13 +2189,8 @@ class BattleTooltips {
 		if ((speciesName.startsWith('Ogerpon-Wellspring') && itemName === 'Wellspring Mask') ||
 			(speciesName.startsWith('Ogerpon-Hearthflame') && itemName === 'Hearthflame Mask') ||
 			(speciesName.startsWith('Ogerpon-Cornerstone') && itemName === 'Cornerstone Mask')) {
-			if (this.battle.tier.includes("New Region")) {
-				value.itemModify(1.1);
-				return value;
-			} else {
-				value.itemModify(1.2);
-				return value;
-			}
+			value.itemModify(1.2);
+			return value;
 		}
 
 		// Gems
@@ -2277,8 +2202,13 @@ class BattleTooltips {
 
 		if ((itemName === 'Muscle Band' && move.category === 'Physical' ||
 			itemName === 'Wise Glasses' && move.category === 'Special' ||
-			itemName === 'Punching Glove' && move.flags['punch']) {
+			itemName === 'Punching Glove' && move.flags['punch'])) {
 			value.itemModify(1.1);
+		}
+		if (this.battle.tier.includes("New Region")) {
+			if ((itemName === 'Power Herb' && move.flags['charge'])) {
+				value.itemModify(1.3);
+			}
 		}
 		return value;
 	}

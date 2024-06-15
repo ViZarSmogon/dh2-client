@@ -3035,6 +3035,7 @@ export class Battle {
 			case 'grasspledge':
 			case 'firepledge':
 			case 'waterpledge':
+			case 'dragonsoul'://New Region
 				this.scene.updateWeather();
 				break;
 			}
