@@ -2161,7 +2161,7 @@ class BattleTooltips {
 		// Pokemon-specific items
 		if (item.name === 'Soul Dew' && this.battle.gen < 7) return value;
 		if ((BattleTooltips.orbUsers[speciesName]?.includes(item.name) &&
-			BattleTooltips.orbTypes[item.name]?.includes(moveType)) && !this.battle.tier.includes("Strongest")) {
+			BattleTooltips.orbTypes[item.name]?.includes(moveType))) {
 			value.itemModify(1.2);
 			return value;
 		}
