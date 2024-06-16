@@ -1987,6 +1987,9 @@ class BattleTooltips {
 			if (light.includes(move.id)) {
 				value.abilityModify(1.3, 'Illuminate');
 			}
+			if (move.type === 'Bug') {
+				value.abilityModify(item.id.endsWith('berry') ? 2.25 : 1.5, 'Honey Gather');
+			}
 		}
 
 		if (move.category !== 'Status') {
@@ -2003,7 +2006,7 @@ class BattleTooltips {
 					auraBroken = true;
 				} else if (allyAbility === 'Battery' && ally !== pokemon && move.category === 'Special') {
 					value.modify(1.3, 'Battery');
-				} else if (allyAbility === 'Power Spot' && ally !== pokemon) {
+				} else if (allyAbility === 'Power Spot' && (ally !== pokemon && !this.battle.tier.includes("New Region"))) {
 					value.modify(1.3, 'Power Spot');
 				} else if (allyAbility === 'Steely Spirit' && moveType === 'Steel') {
 					value.modify(1.5, 'Steely Spirit');
