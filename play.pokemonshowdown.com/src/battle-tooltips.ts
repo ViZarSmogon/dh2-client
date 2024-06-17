@@ -1718,7 +1718,7 @@ class BattleTooltips {
 		if (move.id === 'eruption' || move.id === 'waterspout' || move.id === 'dragonenergy') {
 			value.set(Math.floor(150 * pokemon.hp / pokemon.maxhp) || 1);
 		}
-		if (move.id === 'facade' && !['', 'slp', 'frz'].includes(pokemon.status)) {
+		if (move.id === 'facade' && (!['', 'slp', 'frz'].includes(pokemon.status) || (![''].includes(pokemon.status) && this.battle.tier.includes("New Region")))) {
 			value.modify(2, 'Facade + status');
 		}
 		if (move.id === 'flail' || move.id === 'reversal') {
@@ -1984,11 +1984,12 @@ class BattleTooltips {
 				'prismaticlaser', 'psybeam', 'signalbeam', 'solarbeam', 'solarblade', 'steelbeam', 
 				'sunsteelstrike',
 			];
+			let item = Dex.items.get(serverPokemon.item);
 			if (light.includes(move.id)) {
 				value.abilityModify(1.3, 'Illuminate');
 			}
 			if (move.type === 'Bug') {
-				value.abilityModify(item.id.endsWith('berry') ? 2.25 : 1.5, 'Honey Gather');
+				value.abilityModify(item.id.endsWith('berry') ? 1.5 : 1.2, 'Honey Gather');
 			}
 		}
 
@@ -2006,10 +2007,16 @@ class BattleTooltips {
 					auraBroken = true;
 				} else if (allyAbility === 'Battery' && ally !== pokemon && move.category === 'Special') {
 					value.modify(1.3, 'Battery');
-				} else if (allyAbility === 'Power Spot' && (ally !== pokemon && !this.battle.tier.includes("New Region"))) {
-					value.modify(1.3, 'Power Spot');
+				} else if (allyAbility === 'Power Spot') {
+					if (ally !== pokemon) {
+						value.modify(1.3, 'Power Spot');
+					} else if (this.battle.tier.includes("New Region")) {
+						value.modify(1.3, 'Power Spot');
+					}
 				} else if (allyAbility === 'Steely Spirit' && moveType === 'Steel') {
 					value.modify(1.5, 'Steely Spirit');
+				} else if (allyAbility === 'Victory Star' && this.battle.tier.includes("New Region")) {
+					value.modify(1.1, 'Victory Star');
 				}
 			}
 			for (const foe of pokemon.side.foe.active) {
@@ -2080,7 +2087,7 @@ class BattleTooltips {
 		if (this.battle.gen > 2 && serverPokemon.status === 'brn' && move.id !== 'facade' && move.category === 'Physical') {
 			if (!value.tryAbility("Guts")) value.modify(0.5, 'Burn');
 		}
-		if (serverPokemon.status === 'frz' && move.category === 'Special' && this.battle.tier.includes("New Region")) {
+		if (serverPokemon.status === 'frz' && move.id !== 'moodswing' && move.category === 'Special' && this.battle.tier.includes("New Region")) {
 			value.modify(0.5, 'Freeze');
 		}
 
