@@ -1991,6 +1991,10 @@ class BattleTooltips {
 			if (move.type === 'Bug') {
 				value.abilityModify(item.id.endsWith('berry') ? 1.5 : 1.2, 'Honey Gather');
 			}
+			if (pokemon.boosts.accuracy > 0) {
+				let boosts = pokemon.boosts.accuracy;
+				value.abilityModify(1 + 0.1 * boosts, "Keen Eye");
+			}
 		}
 
 		if (move.category !== 'Status') {
