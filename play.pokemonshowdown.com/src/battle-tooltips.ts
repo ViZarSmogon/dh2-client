@@ -1163,6 +1163,13 @@ class BattleTooltips {
 					}
 				}
 			}
+			if (this.battle.tier.includes("New Region")) {
+				if (weather === 'hail') {
+					if (ability === 'hailstorm') {
+						stats.def = Math.floor(stats.def * 1.3333);
+					}
+				}
+			}
 		}
 		if (ability === 'defeatist' && serverPokemon.hp <= serverPokemon.maxhp / 2) {
 			stats.atk = Math.floor(stats.atk * 0.5);
@@ -1993,7 +2000,7 @@ class BattleTooltips {
 			}
 			if (pokemon.boosts.accuracy > 0) {
 				let boosts = pokemon.boosts.accuracy;
-				value.abilityModify(1 + 0.1 * boosts, "Keen Eye");
+				value.abilityModify(1 + 0.15 * boosts, "Keen Eye");
 			}
 		}
 
@@ -2058,6 +2065,22 @@ class BattleTooltips {
 		) {
 			if (target ? target.isGrounded() : true) {
 				value.modify(0.5, 'Grassy Terrain + grounded target');
+			}
+		}
+		if (this.battle.tier.includes("New Region")) {
+			if (this.battle.hasPseudoWeather('Mud Sport')) {
+				if (moveType === 'Electric') {
+					value.modify(0.25, 'Mud Sport');
+				} if (moveType === 'Ground') {
+					value.modify(1.25, 'Mud Sport');
+				}
+			}
+			if (this.battle.hasPseudoWeather('Water Sport')) {
+				if (moveType === 'Fire') {
+					value.modify(0.25, 'Water Sport');
+				} if (moveType === 'Water') {
+					value.modify(1.25, 'Water Sport');
+				}
 			}
 		}
 		if (

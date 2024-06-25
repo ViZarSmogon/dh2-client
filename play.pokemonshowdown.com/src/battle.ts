@@ -3085,6 +3085,16 @@ export class Battle {
 				}
 				if (this.gen > 6) maxTimeLeft = 8;
 			}
+			if (effect.id.endsWith('sport')) {
+				for (let i = this.pseudoWeather.length - 1; i >= 0; i--) {
+					let pwID = toID(this.pseudoWeather[i][0]);
+					if (pwID.endsWith('sport')) {
+						this.pseudoWeather.splice(i, 1);
+						continue;
+					}
+				}
+				if (this.id.includes('newregion')) minTimeLeft = 3;
+			}
 			if (kwArgs.persistent) minTimeLeft += 2;
 			this.addPseudoWeather(effect.name, minTimeLeft, maxTimeLeft);
 
