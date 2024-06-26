@@ -2126,7 +2126,7 @@ class BattleTooltips {
 		}
 
 		if (this.battle.tier.includes("Weakest")) {
-			if (BattleTooltips.itemTypes[item.name] === moveType && itemName !== 'Fairy Feather') {
+			if (BattleTooltips.itemTypes[item.name] === moveType) {
 				value.itemModify(1.1);
 				return value;
 			}
