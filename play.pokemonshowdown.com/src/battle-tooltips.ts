@@ -1523,16 +1523,39 @@ class BattleTooltips {
 		}
 		// Ivy Cudgel's type depends on the Ogerpon forme
 		if (move.id === 'ivycudgel') {
-			switch (pokemon.getSpeciesForme()) {
-			case 'Ogerpon-Wellspring': case 'Ogerpon-Wellspring-Tera':
-				moveType = 'Water';
-				break;
-			case 'Ogerpon-Hearthflame': case 'Ogerpon-Hearthflame-Tera':
-				moveType = 'Fire';
-				break;
-			case 'Ogerpon-Cornerstone': case 'Ogerpon-Cornerstone-Tera':
-				moveType = 'Rock';
-				break;
+			if (this.battle.tier.includes("New Region")) {
+				switch (pokemon.getSpeciesForme()) {
+				case 'Ogerpon-Wellspring': case 'Ogerpon-Wellspring-Tera':
+					moveType = 'Water';
+					break;
+				case 'Ogerpon-Hearthflame': case 'Ogerpon-Hearthflame-Tera':
+					moveType = 'Fire';
+					break;
+				case 'Ogerpon-Cornerstone': case 'Ogerpon-Cornerstone-Tera':
+					moveType = 'Rock';
+					break;
+				case 'Ogerpon-Lavender': case 'Ogerpon-Lavender-Tera':
+					moveType = 'Ghost';
+					break;
+				case 'Ogerpon-Indigo':
+					moveType = 'Normal';
+					break;
+				case 'Ogerpon-Indigo-Tera':
+					moveType = 'Stellar';
+					break;
+				}
+			} else {
+				switch (pokemon.getSpeciesForme()) {
+				case 'Ogerpon-Wellspring': case 'Ogerpon-Wellspring-Tera':
+					moveType = 'Water';
+					break;
+				case 'Ogerpon-Hearthflame': case 'Ogerpon-Hearthflame-Tera':
+					moveType = 'Fire';
+					break;
+				case 'Ogerpon-Cornerstone': case 'Ogerpon-Cornerstone-Tera':
+					moveType = 'Rock';
+					break;
+				}
 			}
 		}
 		
@@ -2068,19 +2091,12 @@ class BattleTooltips {
 			}
 		}
 		if (this.battle.tier.includes("New Region")) {
-			if (this.battle.hasPseudoWeather('Mud Sport')) {
-				if (moveType === 'Electric') {
-					value.modify(0.25, 'Mud Sport');
-				} if (moveType === 'Ground') {
-					value.modify(1.25, 'Mud Sport');
-				}
+			let sportModifier = Math.floor(1 / 3 * 10) / 10;
+			if (this.battle.hasPseudoWeather('Mud Sport') && moveType === 'Electric') {
+				value.modify(sportModifier, 'Mud Sport');
 			}
-			if (this.battle.hasPseudoWeather('Water Sport')) {
-				if (moveType === 'Fire') {
-					value.modify(0.25, 'Water Sport');
-				} if (moveType === 'Water') {
-					value.modify(1.25, 'Water Sport');
-				}
+			if (this.battle.hasPseudoWeather('Water Sport') && moveType === 'Fire') {
+				value.modify(sportModifier, 'Water Sport');
 			}
 		}
 		if (
@@ -2224,6 +2240,7 @@ class BattleTooltips {
 			return value;
 		}
 		if ((speciesName.startsWith('Ogerpon-Wellspring') && itemName === 'Wellspring Mask') ||
+			(speciesName.startsWith('Ogerpon-Hearthflame') && itemName === 'Hearthflame Mask') ||
 			(speciesName.startsWith('Ogerpon-Hearthflame') && itemName === 'Hearthflame Mask') ||
 			(speciesName.startsWith('Ogerpon-Cornerstone') && itemName === 'Cornerstone Mask')) {
 			value.itemModify(1.2);
