@@ -1534,14 +1534,8 @@ class BattleTooltips {
 				case 'Ogerpon-Cornerstone': case 'Ogerpon-Cornerstone-Tera':
 					moveType = 'Rock';
 					break;
-				case 'Ogerpon-Lavender': case 'Ogerpon-Lavender-Tera':
-					moveType = 'Ghost';
-					break;
-				case 'Ogerpon-Indigo':
-					moveType = 'Normal';
-					break;
-				case 'Ogerpon-Indigo-Tera':
-					moveType = 'Stellar';
+				case 'Ogerpon-Joyful':
+					moveType = 'Fairy';
 					break;
 				}
 			} else {
