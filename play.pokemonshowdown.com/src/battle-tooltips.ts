@@ -769,6 +769,9 @@ class BattleTooltips {
 				if (light.includes(move.id)) {
 					text += `<p class="movetag">&#x2713; Light <small>(boosted by Illuminate)</small></p>`;
 				}
+				if (move.flags.bullet && ability === 'megalauncher') {
+					text += `<p class="movetag">&#x2713; Pulse <small>(boosted by Mega Launcher)</small></p>`;
+				}
 			}
 		}
 		return text;
@@ -2018,6 +2021,9 @@ class BattleTooltips {
 			if (pokemon.boosts.accuracy > 0) {
 				let boosts = pokemon.boosts.accuracy;
 				value.abilityModify(1 + 0.15 * boosts, "Keen Eye");
+			}
+			if (move.flags['bullet']) {
+				value.abilityModify(1.5, "Mega Launcher");
 			}
 		}
 
