@@ -933,6 +933,7 @@ export class BattleScene implements BattleSceneStub {
 				hail: 'Hail',
 				snow: 'Snow',
 				deltastream: 'Strong Winds',
+				heavyblizzards: 'Heavy Blizzards',
 			};
 			weatherhtml = `${weatherNameTable[this.battle.weather] || this.battle.weather}`;
 			if (this.battle.weatherMinTimeLeft !== 0) {
@@ -958,7 +959,7 @@ export class BattleScene implements BattleSceneStub {
 		return buf;
 	}
 	upkeepWeather() {
-		const isIntense = ['desolateland', 'primordialsea', 'deltastream'].includes(this.curWeather);
+		const isIntense = ['desolateland', 'primordialsea', 'deltastream', 'heavyblizzards'].includes(this.curWeather);
 		this.$weather.animate({
 			opacity: 1.0,
 		}, 300).animate({
@@ -976,7 +977,7 @@ export class BattleScene implements BattleSceneStub {
 		for (const pseudoWeatherData of this.battle.pseudoWeather) {
 			terrain = toID(pseudoWeatherData[0]);
 		}
-		if (weather === 'desolateland' || weather === 'primordialsea' || weather === 'deltastream') {
+		if (weather === 'desolateland' || weather === 'primordialsea' || weather === 'deltastream' || weather === 'heavyblizzards') {
 			isIntense = true;
 		}
 
@@ -1831,6 +1832,11 @@ export class PokemonSprite extends Sprite {
 		fallen3: ['Fallen: 3', 'good'],
 		fallen4: ['Fallen: 4', 'good'],
 		fallen5: ['Fallen: 5', 'good'],
+		weaponryatk: ['Weaponry: Atk', 'good'],//Roovnen
+		weaponrydef: ['Weaponry: Def', 'good'],//Roovnen
+		weaponryspa: ['Weaponry: SpA', 'good'],//Roovnen
+		weaponryspd: ['Weaponry: SpD', 'good'],//Roovnen
+		weaponryspe: ['Weaponry: Spe', 'good'],//Roovnen
 		noretreat: ['No Retreat', 'bad'],
 		octolock: ['Octolock', 'bad'],
 		tarshot: ['Tar Shot', 'bad'],

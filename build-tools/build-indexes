@@ -108,7 +108,7 @@ function buildSearchIndex() {
 	index = index.concat(Object.keys(Dex.data.TypeChart).map(x => toID(x) + ' type'));
 	index = index.concat(['physical', 'special', 'status'].map(x => toID(x) + ' category'));
 	index = index.concat(['monster', 'water1', 'bug', 'flying', 'field', 'fairy', 'grass', 'humanlike', 'water3', 'mineral', 'amorphous', 'water2', 'ditto', 'dragon', 'undiscovered'].map(x => toID(x) + ' egggroup'));
-	index = index.concat(['ou', 'uu', 'ru', 'nu', 'pu', 'zu', 'lc', 'nfe', 'uber', 'uubl', 'rubl', 'nubl', 'publ', 'zubl', 'cap', 'caplc', 'capnfe'].map(x => toID(x) + ' tier'));
+	index = index.concat(['ou', 'uu', 'ru', 'nu', 'pu', 'zu', 'su', 'iu', 'fu', 'lc', 'nfe', 'uber', 'uubl', 'rubl', 'nubl', 'publ', 'zubl', 'subl', 'iubl', 'fubl', 'cap', 'caplc', 'capnfe'].map(x => toID(x) + ' tier'));
 
 	let BattleArticleTitles = {};
 
@@ -655,11 +655,11 @@ function buildTeambuilderTables() {
 			if (gen === 'gen4') {
 				return ["CAP", "CAP NFE", "CAP LC", "AG", "Uber", "OU", "(OU)", "UUBL", "UU", "NUBL", "NU", "NFE", "LC"];
 			}
-			return ["CAP", "CAP NFE", "CAP LC", "AG", "Uber", "(Uber)", "OU", "(OU)", "UUBL", "UU", "RUBL", "RU", "NUBL", "NU", "PUBL", "PU", "ZUBL", "ZU", "New", "NFE", "LC", "Unreleased"];
+			return ["CAP", "CAP NFE", "CAP LC", "AG", "Uber", "(Uber)", "OU", "(OU)", "UUBL", "UU", "RUBL", "RU", "NUBL", "NU", "PUBL", "PU", "ZUBL", "ZU", "SUBL", "SU", "IUBL", "IU", "FUBL", "FU", "New", "NFE", "LC", "Unreleased"];
 		})();
 
 		for (const tier of tierOrder) {
-			if (tier in {OU:1, AG:1, Uber:1, UU:1, RU:1, NU:1, PU:1, ZU: 1, NFE:1, LC:1, DOU:1, DUU:1, "(DUU)":1, New:1, Legal:1, Regular:1, "Restricted Legendary":1, "CAP LC":1}) {
+			if (tier in {OU:1, AG:1, Uber:1, UU:1, RU:1, NU:1, PU:1, ZU: 1, SU: 1, IU: 1, FU: 1, NFE:1, LC:1, DOU:1, DUU:1, "(DUU)":1, New:1, Legal:1, Regular:1, "Restricted Legendary":1, "CAP LC":1}) {
 				let usedTier = tier;
 				if (usedTier === "(DUU)") usedTier = "DNU";
 				formatSlices[usedTier] = tiers.length;
@@ -1238,7 +1238,7 @@ function buildTeambuilderTables() {
 			}
 			// Find any nonstandard tiers used by this mod
 			const standardTiers = ['uber', 'ou', 'uubl', 'uu', 'rubl', 'ru', 'nubl', 'nu', 'publ',
-				'pu', 'zu', 'zubl', 'nfe', 'lcuber', 'lc', 'cap', 'caplc', 'capnfe', 'ag', 'duber',
+				'pu', 'zubl', 'zu', 'subl', 'su', 'iubl', 'iu', 'fubl', 'fu', 'nfe', 'lcuber', 'lc', 'cap', 'caplc', 'capnfe', 'ag', 'duber',
 				'dou', 'dbl', 'duu', 'dnu', 'illegal', 'unreleased'];
 			if (!ModConfig[modConfigId].customTiers) ModConfig[modConfigId].customTiers = [];
 			if (!ModConfig[modConfigId].customDoublesTiers) ModConfig[modConfigId].customDoublesTiers = [];
@@ -1318,7 +1318,7 @@ function buildTeambuilderTables() {
 			BattleTeambuilderTable[modConfigId].formatSlices = formatSlices;
 			const doublesFormatSlices = {};
 			if (hasDoublesFormats) BattleTeambuilderTable[modConfigId].doubles.formatSlices = doublesFormatSlices;
-			const tierOrder = ["OU", "AG", "Uber", "(Uber)", "OU", "(OU)", "UUBL", "UU", "RUBL", "RU", "NUBL", "NU", "PUBL", "PU", "(PU)", "ZUBL", "ZU", "New", "NFE", "LC Uber", "LC", "Unreleased"];
+			const tierOrder = ["OU", "AG", "Uber", "(Uber)", "OU", "(OU)", "UUBL", "UU", "RUBL", "RU", "NUBL", "NU", "PUBL", "PU", "(PU)", "ZUBL", "ZU", "SUBL", "SU", "IUBL", "IU", "FUBL", "FU", "New", "NFE", "LC Uber", "LC", "Unreleased"];
 			const tierOrderDoubles = ["DUber", "(DUber)", "DOU", "DBL", "(DOU)", "DUU", "(DUU)", "New", "NFE", "LC Uber", "LC"];
 			if (hasSinglesFormats) buildTiers(modConfigId, tierTable, tiers, customTiers, formatSlices, tierOrder);
 			if (hasDoublesFormats) buildTiers(modConfigId, tierTable, doublesTiers, customDoublesTiers, doublesFormatSlices, tierOrderDoubles);
