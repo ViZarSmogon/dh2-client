@@ -2158,6 +2158,7 @@ class BattleTooltips {
 		'Palkia': ['Lustrous Globe', 'Lustrous Orb'],
 		'Giratina': ['Griseous Core', 'Griseous Orb'],
 		'Venomicon': ['Vile Vial'],
+		'Latakuno': ['Shadow Dew'],
 	};
 	static orbTypes: {[itemName: string]: TypeName[]} = {
 		'Soul Dew': ['Psychic', 'Dragon'],
@@ -2168,6 +2169,7 @@ class BattleTooltips {
 		'Griseous Core': ['Ghost', 'Dragon'],
 		'Griseous Orb': ['Ghost', 'Dragon'],
 		'Vile Vial': ['Poison', 'Flying'],
+		'Shadow Dew': ['Dark', 'Dragon'],
 	};
 	static noGemMoves = [
 		'Fire Pledge',
