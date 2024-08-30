@@ -572,7 +572,7 @@ class BattleTooltips {
 						zMove = this.battle.dex.moves.get(BattleTooltips.zMoveTable['Water']);
 						break;
 					case 'sandstorm':
-						zMove = this.battle.dex.moves.get(BattleTooltips.zMoveTable['Rock']);
+						zMove = this.battle.dex.moves.get(BattleTooltips.zMoveTable['Ground']);
 						break;
 					case 'hail':
 					case 'snow':
@@ -1105,7 +1105,7 @@ class BattleTooltips {
 			stats.atk = Math.floor(stats.atk * 1.5);
 		}
 		if (weather) {
-			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm') {
+			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Ground') && weather === 'sandstorm') {
 				stats.spd = Math.floor(stats.spd * 1.5);
 			}
 			if (this.pokemonHasType(pokemon, 'Ice') && weather === 'snow') {
@@ -1444,7 +1444,7 @@ class BattleTooltips {
 				moveType = 'Water';
 				break;
 			case 'sandstorm':
-				moveType = 'Rock';
+				moveType = 'Ground';
 				break;
 			case 'hail':
 			case 'snow':
@@ -1460,7 +1460,7 @@ class BattleTooltips {
 			} else if (this.battle.hasPseudoWeather('Misty Terrain')) {
 				moveType = 'Fairy';
 			} else if (this.battle.hasPseudoWeather('Psychic Terrain')) {
-				moveType = 'Psychic';
+				moveType = 'Fairy';
 			}
 		}
 		if (move.id === 'terablast' && pokemon.terastallized) {
@@ -1498,7 +1498,7 @@ class BattleTooltips {
 				moveType = 'Fire';
 				break;
 			case 'Ogerpon-Cornerstone': case 'Ogerpon-Cornerstone-Tera':
-				moveType = 'Rock';
+				moveType = 'Ground';
 				break;
 			}
 		}
@@ -1886,7 +1886,7 @@ class BattleTooltips {
 		if (['psn', 'tox'].includes(pokemon.status) && move.category === 'Physical') {
 			value.abilityModify(1.5, "Toxic Boost");
 		}
-		if (['Rock', 'Ground', 'Steel'].includes(moveType) && this.battle.weather === 'sandstorm') {
+		if (['Ground', 'Steel'].includes(moveType) && this.battle.weather === 'sandstorm') {
 			if (value.tryAbility("Sand Force")) value.weatherModify(1.3, "Sandstorm", "Sand Force");
 		}
 		if (move.secondaries) {
@@ -1977,7 +1977,7 @@ class BattleTooltips {
 		// Terrain
 		if ((this.battle.hasPseudoWeather('Electric Terrain') && moveType === 'Electric') ||
 			(this.battle.hasPseudoWeather('Grassy Terrain') && moveType === 'Grass') ||
-			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Psychic')) {
+			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Fairy')) {
 			if (pokemon.isGrounded(serverPokemon)) {
 				value.modify(this.battle.gen > 7 ? 1.3 : 1.5, 'Terrain boost');
 			}
@@ -2038,8 +2038,8 @@ class BattleTooltips {
 	}
 
 	static incenseTypes: {[itemName: string]: TypeName} = {
-		'Odd Incense': 'Psychic',
-		'Rock Incense': 'Rock',
+		'Odd Incense': 'Fairy',
+		'Rock Incense': 'Ground',
 		'Rose Incense': 'Grass',
 		'Sea Incense': 'Water',
 		'Wave Incense': 'Water',
@@ -2050,7 +2050,7 @@ class BattleTooltips {
 		'Charcoal': 'Fire',
 		'Dragon Fang': 'Dragon',
 		'Fairy Feather': 'Fairy',
-		'Hard Stone': 'Rock',
+		'Hard Stone': 'Ground',
 		'Magnet': 'Electric',
 		'Metal Coat': 'Steel',
 		'Miracle Seed': 'Grass',
@@ -2059,10 +2059,10 @@ class BattleTooltips {
 		'Poison Barb': 'Poison',
 		'Sharp Beak': 'Flying',
 		'Silk Scarf': 'Normal',
-		'Silver Powder': 'Bug',
+		'Silver Powder': 'Grass',
 		'Soft Sand': 'Ground',
-		'Spell Tag': 'Ghost',
-		'Twisted Spoon': 'Psychic',
+		'Spell Tag': 'Dark',
+		'Twisted Spoon': 'Fairy',
 	};
 	static orbUsers: {[speciesForme: string]: string[]} = {
 		'Latias': ['Soul Dew'],
@@ -2073,13 +2073,13 @@ class BattleTooltips {
 		'Venomicon': ['Vile Vial'],
 	};
 	static orbTypes: {[itemName: string]: TypeName[]} = {
-		'Soul Dew': ['Psychic', 'Dragon'],
+		'Soul Dew': ['Fairy', 'Dragon'],
 		'Adamant Crystal': ['Steel', 'Dragon'],
 		'Adamant Orb': ['Steel', 'Dragon'],
 		'Lustrous Globe': ['Water', 'Dragon'],
 		'Lustrous Orb': ['Water', 'Dragon'],
-		'Griseous Core': ['Ghost', 'Dragon'],
-		'Griseous Orb': ['Ghost', 'Dragon'],
+		'Griseous Core': ['Dark', 'Dragon'],
+		'Griseous Orb': ['Dark', 'Dragon'],
 		'Vile Vial': ['Poison', 'Flying'],
 	};
 	static noGemMoves = [
@@ -2436,7 +2436,7 @@ class BattleStatGuesser {
 			specialBulk *= 1.3;
 			moveCount['SpecialStall']++;
 		}
-		if (abilityid === 'sandstream' && species.types.includes('Rock')) {
+		if (abilityid === 'sandstream' && species.types.includes('Ground')) {
 			specialBulk *= 1.5;
 		}
 
@@ -2702,8 +2702,8 @@ class BattleStatGuesser {
 			evs[secondaryStat] = ev;
 			evTotal += ev;
 
-			let SRweaknesses = ['Fire', 'Flying', 'Bug', 'Ice'];
-			let SRresistances = ['Ground', 'Steel', 'Fighting'];
+			let SRweaknesses = ['Electric', 'Fire', 'Poison', 'Steel'];
+			let SRresistances = ['Flying', 'Grass', 'Ground', 'Ice', 'Water'];
 			let SRweak = 0;
 			if (set.ability !== 'Magic Guard' && set.ability !== 'Mountaineer') {
 				if (SRweaknesses.indexOf(species.types[0]) >= 0) {
