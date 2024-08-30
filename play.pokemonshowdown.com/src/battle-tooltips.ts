@@ -1109,7 +1109,11 @@ class BattleTooltips {
 			stats.atk *= 2;
 		}
 		if (ability === 'hustle' || (ability === 'gorillatactics' && !clientPokemon?.volatiles['dynamax'])) {
-			stats.atk = Math.floor(stats.atk * 1.5);
+			if (this.battle.tier.includes("New SS")) {
+				stats.atk = Math.floor(stats.atk * 1.3);
+			} else {
+				stats.atk = Math.floor(stats.atk * 1.5);
+			}
 		}
 		if (weather) {
 			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm' && !this.battle.tier.includes("Weakest")) {
@@ -1914,7 +1918,11 @@ class BattleTooltips {
 		}
 		for (let i = 1; i <= 5 && i <= pokemon.side.faintCounter; i++) {
 			if (pokemon.volatiles[`fallen${i}`]) {
-				value.abilityModify(1 + 0.1 * i, "Supreme Overlord");
+				if (this.battle.tier.includes("New SS")) {
+					value.abilityModify(1 + 0.05 * i, "Supreme Overlord");
+				} else {
+					value.abilityModify(1 + 0.1 * i, "Supreme Overlord");
+				}
 			}
 		}
 		if (target) {
