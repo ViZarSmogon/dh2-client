@@ -19,11 +19,11 @@ Config.whitelist = [
 // address bar is `Config.routes.client`.
 Config.defaultserver = {
 	id: 'dragonheaven',
-    host: 'localhost',
-    port: 8000,
-    httpport: 8000,
-    altport: 80,
-    registered: true
+	host: 'localhost',
+	port: 8000,
+	httpport: 80,
+	altport: 80,
+	registered: true
 };
 
 Config.roomsFirstOpenScript = function () {
@@ -36,7 +36,7 @@ Config.customcolors = {
 Config.version = "0.11.2";
 
 Config.routes = {
-	root: '191.101.232.116',
+	root: 'petmodsdh.com',
 	client: 'localhost',
 	dex: 'dex.pokemonshowdown.com',
 	replays: 'replay.pokemonshowdown.com',
