@@ -1195,6 +1195,11 @@ class BattleTooltips {
 				stats.spa = Math.floor(stats.spa * 1.3333);
 			}
 		}
+		if ((this.battle.hasPseudoWeather('Grassy Terrain') || this.battle.hasPseudoWeather('Misty Terrain') || this.battle.hasPseudoWeather('Psychic Terrain')) && this.battle.tier.includes("Eason Region")) {
+			if (ability === 'surgesurfer') {
+				speedModifiers.push(2);
+			}
+		}
 		if (item === 'choicespecs' && !clientPokemon?.volatiles['dynamax']) {
 			stats.spa = Math.floor(stats.spa * 1.5);
 		}
@@ -1464,11 +1469,11 @@ class BattleTooltips {
 				moveType = 'Psychic';
 			}
 		}
-		if (move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Stellar' && !this.battle.tier.includes("New Region")) {
-			moveType = 'Stellar';
-		}
-		if (move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Terastal' && this.battle.tier.includes("New Region")) {
+		if (move.id === 'terablast' && pokemon.terastallized) {
 			moveType = pokemon.terastallized as TypeName;
+		}
+		if (move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Stellar') {
+			moveType = 'Stellar';
 		}
 
 		// Aura Wheel as Morpeko-Hangry changes the type to Dark
@@ -1540,7 +1545,7 @@ class BattleTooltips {
 		}
 
 		if (move.id === 'photongeyser' || move.id === 'lightthatburnsthesky' ||
-			move.id === 'terablast' && pokemon.terastallized || (this.battle.tier.includes("New Region") && pokemon.getSpeciesForme() === 'Terapagos-Terastal')) {
+			move.id === 'terablast' && pokemon.terastallized) {
 			const stats = this.calculateModifiedStats(pokemon, serverPokemon, true);
 			if (stats.atk > stats.spa) category = 'Physical';
 		}
@@ -1860,8 +1865,11 @@ class BattleTooltips {
 			}
 		}
 		// Base power based on times hit
+		const ogBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
+		const addedBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
+		const maxBP = this.battle.tier.includes("Eason Region") ? 210 : 350;
 		if (move.id === 'ragefist') {
-			value.set(Math.min(350, 50 + 50 * pokemon.timesAttacked),
+			value.set(Math.min(maxBP, ogBP + addedBP * pokemon.timesAttacked),
 				pokemon.timesAttacked > 0
 					? `Hit ${pokemon.timesAttacked} time${pokemon.timesAttacked > 1 ? 's' : ''}`
 					: undefined);
