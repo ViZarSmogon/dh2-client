@@ -5345,7 +5345,7 @@ export const BattleMoveAnims: AnimTable = {
 			}, 'swing');
 		},
 	},
-	ivycudgelrock: {
+	ivycudgelfighting: {
 		anim(scene, [attacker, defender]) {
 			scene.showEffect('mudwisp', {
 				x: defender.x,
