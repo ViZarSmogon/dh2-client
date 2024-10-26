@@ -1117,6 +1117,9 @@ class BattleTooltips {
 		if (ability === 'hustle' || (ability === 'gorillatactics' && !clientPokemon?.volatiles['dynamax'])) {
 			stats.atk = Math.floor(stats.atk * 1.5);
 		}
+		if (this.battle.tier.includes("MineMons") && (ability === 'ironaxe' || ability === 'goldaxe')) {
+			stats.atk = Math.floor(stats.atk * 1.3);
+		}
 		if (weather) {
 			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm') {
 				stats.spd = Math.floor(stats.spd * 1.5);
@@ -1190,6 +1193,27 @@ class BattleTooltips {
 							stats[statName] = Math.floor(stats[statName] * 1.3);
 						}
 					}
+				}
+			}
+			if (this.battle.tier.includes("MineMons")) {
+				if (clientPokemon.volatiles['swiftness']) {
+					speedModifiers.push(1.5);
+				}
+				if (clientPokemon.volatiles['strength']) {
+					stats.atk = Math.floor(stats.atk * 1.5);
+				}
+				if (clientPokemon.volatiles['slowness']) {
+					speedModifiers.push(0.67);
+				}
+				if (clientPokemon.volatiles['weakness']) {
+					stats.atk = Math.floor(stats.atk * 0.67);
+				}
+				if (clientPokemon.volatiles['turtlemaster']) {
+					stats.def = Math.floor(stats.def * 2);
+					speedModifiers.push(0.67);
+				}
+				if (clientPokemon.volatiles['resistance']) {
+					stats.def = Math.floor(stats.def * 1.5);
 				}
 			}
 		}
@@ -1465,6 +1489,9 @@ class BattleTooltips {
 		if (move.id === 'revelationdance') {
 			moveType = pokemonTypes[0];
 		}
+		if (this.battle.tier.includes("MineMons") && ['mightystrike', 'goldenstrike', 'swordslash', 'goldenslash', 'singleshot', 'powershot'].includes(move.id)) {
+			moveType = pokemonTypes[0];
+		}
 		// Moves that require an item to change their type.
 		let item = Dex.items.get(value.itemName);
 		if (move.id === 'multiattack' && item.onMemory) {
@@ -1550,6 +1577,10 @@ class BattleTooltips {
 				moveType = 'Rock';
 				break;
 			}
+		}
+		
+		if (move.id === 'tridentshot' && (pokemon.getBaseSpecies() === 'Drowned' || pokemon.getBaseSpecies() === 'Steve') && this.battle.tier.includes("MineMons")) {
+			moveType = 'Electric';
 		}
 
 		// Other abilities that change the move type.
@@ -1843,6 +1874,11 @@ class BattleTooltips {
 			move.id === 'watershuriken' && pokemon.getSpeciesForme() === 'Greninja-Ash' && pokemon.ability === 'Battle Bond'
 		) {
 			value.set(20, 'Battle Bond');
+		}
+		if (
+			move.id === 'tridentshot' && (pokemon.getBaseSpecies() === 'Drowned' || pokemon.getBaseSpecies() === 'Steve') && this.battle.tier.includes("MineMons")
+		) {
+			value.set(120);
 		}
 		// Moves that check opponent speed
 		if (move.id === 'electroball' && target) {
