@@ -1021,14 +1021,8 @@ class BattleTooltips {
 				stats.atk = Math.floor(stats.atk * 0.5);
 			}
 
-			if (this.battle.gen > 2 && ability === 'quickfeet') {
-				stats.spe = Math.floor(stats.spe * 1.5);
-			} else if (pokemon.status === 'par') {
-				if (this.battle.gen > 6) {
-					stats.spe = Math.floor(stats.spe * 0.5);
-				} else {
-					stats.spe = Math.floor(stats.spe * 0.25);
-				}
+			if (this.battle.gen <= 2 && pokemon.status === 'par') {
+				stats.spe = Math.floor(stats.spe * 0.25);
 			}
 		}
 
@@ -1276,7 +1270,7 @@ class BattleTooltips {
 		stats.spe = stats.spe % 1 > 0.5 ? Math.ceil(stats.spe) : Math.floor(stats.spe);
 
 		if (pokemon.status === 'par' && ability !== 'quickfeet') {
-			if (this.battle.gen > 6) {
+			if (this.battle.gen > 6 && !this.battle.tier.includes("Eason")) {
 				stats.spe = Math.floor(stats.spe * 0.5);
 			} else {
 				stats.spe = Math.floor(stats.spe * 0.25);
@@ -2715,7 +2709,7 @@ class BattleStatGuesser {
 			evTotal += ev;
 
 			let SRweaknesses = ['Fire', 'Flying', 'Bug', 'Ice'];
-			let SRresistances = ['Ground', 'Steel', 'Fighting'];
+			let SRresistances = ['Ground', 'Steel', 'Fighting', 'Grass'];
 			let SRweak = 0;
 			if (set.ability !== 'Magic Guard' && set.ability !== 'Mountaineer') {
 				if (SRweaknesses.indexOf(species.types[0]) >= 0) {
