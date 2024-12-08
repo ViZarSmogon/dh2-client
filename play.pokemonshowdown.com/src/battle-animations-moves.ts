@@ -36029,7 +36029,7 @@ export const BattleMoveAnims: AnimTable = {
 			}, 'swing');
 		},
 	},
-	sspiritbreak: {
+	spiritbreak: {
 		anim(scene, [attacker, defender]) {
 			scene.backgroundEffect('#000000', 1000, 0.3);
 			scene.showEffect('mistball', {
