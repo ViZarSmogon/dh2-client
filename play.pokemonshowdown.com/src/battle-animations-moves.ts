@@ -36032,7 +36032,6 @@ export const BattleMoveAnims: AnimTable = {
 	spiritbreak: {
 		anim(scene, [attacker, defender]) {
 			scene.backgroundEffect('#000000', 1000, 0.3);
-
 			scene.showEffect('mistball', {
 				x: defender.x,
 				y: defender.y,
@@ -36057,7 +36056,6 @@ export const BattleMoveAnims: AnimTable = {
 				scale: 2.5,
 				opacity: 0.2,
 			}, 'decel', 'explode');
-
 			scene.showEffect('iceball', {
 				x: defender.x,
 				y: defender.y,
@@ -36070,7 +36068,6 @@ export const BattleMoveAnims: AnimTable = {
 				scale: 3,
 				opacity: 0.1,
 			}, 'decel', 'explode');
-
 			scene.showEffect('shine', {
 				x: defender.x,
 				y: defender.y,
@@ -36091,7 +36088,6 @@ export const BattleMoveAnims: AnimTable = {
 				opacity: 0.4,
 				time: 925,
 			}, 'decel', 'explode', {filter: 'brightness(50%)'});
-
 			attacker.anim({
 				x: defender.leftof(20),
 				y: defender.y,
@@ -36122,7 +36118,6 @@ export const BattleMoveAnims: AnimTable = {
 	stoneaxe: {
 		anim(scene, [attacker, defender]) {
 			BattleOtherAnims.slashattack.anim(scene, [attacker, defender]);
-
 			scene.showEffect('rock1', {
 				x: defender.x,
 				y: defender.y,
