@@ -1021,16 +1021,8 @@ class BattleTooltips {
 				stats.atk = Math.floor(stats.atk * 0.5);
 			}
 
-			if (this.battle.gen > 2 && ability === 'quickfeet') {
-				stats.spe = Math.floor(stats.spe * 1.5);
-			} else if (pokemon.status === 'par') {
-				if (this.battle.tier.includes("Weakest")) {
-					stats.spe = Math.floor(stats.spe * 0.5);
-				} else if (this.battle.gen > 6) {
-					stats.spe = Math.floor(stats.spe * 0.5);
-				} else {
-					stats.spe = Math.floor(stats.spe * 0.25);
-				}
+			if (this.battle.gen <= 2 && pokemon.status === 'par') {
+				stats.spe = Math.floor(stats.spe * 0.25);
 			}
 		}
 
@@ -1116,7 +1108,7 @@ class BattleTooltips {
 			}
 		}
 		if (weather) {
-			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm' && !this.battle.tier.includes("Weakest")) {
+			if ((this.battle.gen >= 4 || this.battle.tier.includes("ADV Strongest") || this.battle.tier.includes("GSC Strongest")) && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm' && !this.battle.tier.includes("Weakest")) {
 				stats.spd = Math.floor(stats.spd * 1.5);
 			}
 			if (this.pokemonHasType(pokemon, 'Ice') && weather === 'snow') {
@@ -1177,7 +1169,7 @@ class BattleTooltips {
 					} else {
 						stats[statName] = Math.floor(stats[statName] * 1.3);
 					}
-				} 
+				}
 			}
 		}
 		
@@ -1281,8 +1273,12 @@ class BattleTooltips {
 		stats.spe = stats.spe * chainedSpeedModifier;
 		stats.spe = stats.spe % 1 > 0.5 ? Math.ceil(stats.spe) : Math.floor(stats.spe);
 
-		if (this.battle.gen <= 2 && pokemon.status === 'par') {
-			stats.spe = Math.floor(stats.spe * 0.25);
+		if (pokemon.status === 'par' && ability !== 'quickfeet') {
+			if (this.battle.gen > 6 && !this.battle.tier.includes("Strongest")) {
+				stats.spe = Math.floor(stats.spe * 0.5);
+			} else {
+				stats.spe = Math.floor(stats.spe * 0.25);
+			}
 		}
 
 		return stats;
@@ -2141,15 +2137,25 @@ class BattleTooltips {
 				return value;
 			}
 		}
+		if (this.battle.tier.includes("ADV Strongest") || this.battle.tier.includes("GSC Strongest")) {
+			if (BattleTooltips.itemTypes[item.name] === moveType) {
+				value.itemModify(1.2);
+				return value;
+			}
+			if (BattleTooltips.incenseTypes[item.name] === moveType) {
+				value.itemModify(1.2);
+				return value;
+			}
+		}
 
 		// Incenses
-		if (BattleTooltips.incenseTypes[item.name] === moveType && !this.battle.tier.includes("Weakest")) {
+		if (BattleTooltips.incenseTypes[item.name] === moveType && (!this.battle.tier.includes("Weakest") || !this.battle.tier.includes("ADV Strongest"))) {
 			value.itemModify(1.2);
 			return value;
 		}
 
 		// Type-enhancing items
-		if (BattleTooltips.itemTypes[item.name] === moveType && !this.battle.tier.includes("Weakest")) {
+		if (BattleTooltips.itemTypes[item.name] === moveType && (!this.battle.tier.includes("Weakest") || !this.battle.tier.includes("ADV Strongest"))) {
 			value.itemModify(this.battle.gen < 4 ? 1.1 : 1.2);
 			return value;
 		}
@@ -2161,7 +2167,7 @@ class BattleTooltips {
 		}
 
 		// Pokemon-specific items
-		if (item.name === 'Soul Dew' && this.battle.gen < 7) return value;
+		if (item.name === 'Soul Dew' && (this.battle.gen < 7 || this.battle.tier.includes("ADV Strongest"))) return value;
 		if ((BattleTooltips.orbUsers[speciesName]?.includes(item.name) &&
 			BattleTooltips.orbTypes[item.name]?.includes(moveType))) {
 			value.itemModify(1.2);
@@ -2180,8 +2186,13 @@ class BattleTooltips {
 		// Gems
 		if (BattleTooltips.noGemMoves.includes(moveName)) return value;
 		if (itemName === moveType + ' Gem') {
-			value.itemModify(this.battle.gen < 6 ? 1.5 : 1.3);
-			return value;
+			if (this.battle.tier.includes("Strongest")) {
+				value.itemModify(1.5);
+				return value;
+			} else {
+				value.itemModify(this.battle.gen < 6 ? 1.5 : 1.3);
+				return value;
+			}
 		}
 
 		if (itemName === 'Muscle Band' && move.category === 'Physical' ||
