@@ -2134,10 +2134,11 @@ class BattleTooltips {
 		}
 		if (speciesName === 'Ogerpon') {
 			const speciesForme = value.pokemon.getSpeciesForme();
+			const maskModifier = this.battle.tier.includes("Eason Region") ? 1.1 : 1.2;
 			if ((speciesForme.startsWith('Ogerpon-Wellspring') && itemName === 'Wellspring Mask') ||
 			(speciesForme.startsWith('Ogerpon-Hearthflame') && itemName === 'Hearthflame Mask') ||
 			(speciesForme.startsWith('Ogerpon-Cornerstone') && itemName === 'Cornerstone Mask')) {
-				value.itemModify(1.2);
+				value.itemModify(maskModifier);
 				return value;
 			}
 		}
