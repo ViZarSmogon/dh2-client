@@ -1021,14 +1021,8 @@ class BattleTooltips {
 				stats.atk = Math.floor(stats.atk * 0.5);
 			}
 
-			if (this.battle.gen > 2 && ability === 'quickfeet') {
-				stats.spe = Math.floor(stats.spe * 1.5);
-			} else if (pokemon.status === 'par') {
-				if (this.battle.gen > 6) {
-					stats.spe = Math.floor(stats.spe * 0.5);
-				} else {
-					stats.spe = Math.floor(stats.spe * 0.25);
-				}
+			if (this.battle.gen <= 2 && pokemon.status === 'par') {
+				stats.spe = Math.floor(stats.spe * 0.25);
 			}
 		}
 
@@ -1270,7 +1264,7 @@ class BattleTooltips {
 		stats.spe = stats.spe % 1 > 0.5 ? Math.ceil(stats.spe) : Math.floor(stats.spe);
 
 		if (pokemon.status === 'par' && ability !== 'quickfeet') {
-			if (this.battle.gen > 6) {
+			if (this.battle.gen > 6 && !this.battle.tier.includes("Eason")) {
 				stats.spe = Math.floor(stats.spe * 0.5);
 			} else {
 				stats.spe = Math.floor(stats.spe * 0.25);
@@ -1460,7 +1454,7 @@ class BattleTooltips {
 			} else if (this.battle.hasPseudoWeather('Misty Terrain')) {
 				moveType = 'Fairy';
 			} else if (this.battle.hasPseudoWeather('Psychic Terrain')) {
-				moveType = 'Fairy';
+				moveType = 'Psychic';
 			}
 		}
 		if (move.id === 'terablast' && pokemon.terastallized) {
@@ -1977,7 +1971,7 @@ class BattleTooltips {
 		// Terrain
 		if ((this.battle.hasPseudoWeather('Electric Terrain') && moveType === 'Electric') ||
 			(this.battle.hasPseudoWeather('Grassy Terrain') && moveType === 'Grass') ||
-			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Fairy')) {
+			(this.battle.hasPseudoWeather('Psychic Terrain') && moveType === 'Psychic')) {
 			if (pokemon.isGrounded(serverPokemon)) {
 				value.modify(this.battle.gen > 7 ? 1.3 : 1.5, 'Terrain boost');
 			}
@@ -2038,7 +2032,7 @@ class BattleTooltips {
 	}
 
 	static incenseTypes: {[itemName: string]: TypeName} = {
-		'Odd Incense': 'Fairy',
+		'Odd Incense': 'Psychic',
 		'Rock Incense': 'Ground',
 		'Rose Incense': 'Grass',
 		'Sea Incense': 'Water',
@@ -2059,10 +2053,10 @@ class BattleTooltips {
 		'Poison Barb': 'Poison',
 		'Sharp Beak': 'Flying',
 		'Silk Scarf': 'Normal',
-		'Silver Powder': 'Grass',
+		'Silver Powder': 'Bug',
 		'Soft Sand': 'Ground',
-		'Spell Tag': 'Dark',
-		'Twisted Spoon': 'Fairy',
+		'Spell Tag': 'Ghost',
+		'Twisted Spoon': 'Psychic',
 	};
 	static orbUsers: {[speciesForme: string]: string[]} = {
 		'Latias': ['Soul Dew'],
@@ -2073,13 +2067,13 @@ class BattleTooltips {
 		'Venomicon': ['Vile Vial'],
 	};
 	static orbTypes: {[itemName: string]: TypeName[]} = {
-		'Soul Dew': ['Fairy', 'Dragon'],
+		'Soul Dew': ['Psychic', 'Dragon'],
 		'Adamant Crystal': ['Steel', 'Dragon'],
 		'Adamant Orb': ['Steel', 'Dragon'],
 		'Lustrous Globe': ['Water', 'Dragon'],
 		'Lustrous Orb': ['Water', 'Dragon'],
-		'Griseous Core': ['Dark', 'Dragon'],
-		'Griseous Orb': ['Dark', 'Dragon'],
+		'Griseous Core': ['Ghost', 'Dragon'],
+		'Griseous Orb': ['Ghost', 'Dragon'],
 		'Vile Vial': ['Poison', 'Flying'],
 	};
 	static noGemMoves = [
@@ -2706,7 +2700,7 @@ class BattleStatGuesser {
 			evTotal += ev;
 
 			let SRweaknesses = ['Electric', 'Fire', 'Poison', 'Steel'];
-			let SRresistances = ['Flying', 'Grass', 'Ground', 'Ice', 'Water'];
+			let SRresistances = ['Grass', 'Ground', 'Water'];
 			let SRweak = 0;
 			if (set.ability !== 'Magic Guard' && set.ability !== 'Mountaineer') {
 				if (SRweaknesses.indexOf(species.types[0]) >= 0) {
