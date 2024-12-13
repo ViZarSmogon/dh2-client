@@ -1120,7 +1120,8 @@ class BattleTooltips {
 						stats.spa = Math.floor(stats.spa * 1.5);
 					}
 					if (ability === 'orichalcumpulse') {
-						stats.atk = Math.floor(stats.atk * 1.3333);
+						const multiplier = this.battle.tier.includes("Eason") ? 1.3 : 1.3333;
+						stats.atk = Math.floor(stats.atk * multiplier);
 					}
 					let allyActive = clientPokemon?.side.active;
 					if (allyActive) {
@@ -1186,7 +1187,8 @@ class BattleTooltips {
 				speedModifiers.push(2);
 			}
 			if (ability === 'hadronengine') {
-				stats.spa = Math.floor(stats.spa * 1.3333);
+				const multiplier = this.battle.tier.includes("Eason") ? 1.3 : 1.3333;
+				stats.spa = Math.floor(stats.spa * multiplier);
 			}
 		}
 		if ((this.battle.hasPseudoWeather('Grassy Terrain') || this.battle.hasPseudoWeather('Misty Terrain') || this.battle.hasPseudoWeather('Psychic Terrain')) && this.battle.tier.includes("Eason Region")) {
@@ -1991,6 +1993,8 @@ class BattleTooltips {
 					value.modify(1.3, 'Power Spot');
 				} else if (allyAbility === 'Steely Spirit' && moveType === 'Steel') {
 					value.modify(1.5, 'Steely Spirit');
+				} else if (allyAbility === 'Damp' && (moveType === 'Fire' || moveType === 'Electric')) {
+					value.modify(0.33, 'Damp');
 				}
 			}
 			for (const foe of pokemon.side.foe.active) {
@@ -2001,6 +2005,8 @@ class BattleTooltips {
 					auraBoosted = 'Dark Aura';
 				} else if (foe.ability === 'Aura Break') {
 					auraBroken = true;
+				} else if (foe.ability === 'Damp' && (moveType === 'Fire' || moveType === 'Electric')) {
+					value.modify(0.33, 'Damp');
 				}
 			}
 			if (auraBoosted) {
