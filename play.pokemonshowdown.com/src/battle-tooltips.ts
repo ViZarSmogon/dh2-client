@@ -1233,24 +1233,25 @@ class BattleTooltips {
 		if (ability === 'furcoat') {
 			stats.def *= 2;
 		}
+		const ruinModifier = this.battle.tier.includes("Eason") ? 0.9 : 0.75;
 		if (this.battle.abilityActive('Vessel of Ruin')) {
 			if (ability !== 'vesselofruin') {
-				stats.spa = Math.floor(stats.spa * 0.75);
+				stats.spa = Math.floor(stats.spa * ruinModifier);
 			}
 		}
 		if (this.battle.abilityActive('Sword of Ruin')) {
 			if (ability !== 'swordofruin') {
-				stats.def = Math.floor(stats.def * 0.75);
+				stats.def = Math.floor(stats.def * ruinModifier);
 			}
 		}
 		if (this.battle.abilityActive('Tablets of Ruin')) {
 			if (ability !== 'tabletsofruin') {
-				stats.atk = Math.floor(stats.atk * 0.75);
+				stats.atk = Math.floor(stats.atk * ruinModifier);
 			}
 		}
 		if (this.battle.abilityActive('Beads of Ruin')) {
 			if (ability !== 'beadsofruin') {
-				stats.spd = Math.floor(stats.spd * 0.75);
+				stats.spd = Math.floor(stats.spd * ruinModifier);
 			}
 		}
 		const sideConditions = this.battle.mySide.sideConditions;
@@ -1560,7 +1561,7 @@ class BattleTooltips {
 			value.weatherModify(0, 'Hail');
 			value.weatherModify(0, 'Snow');
 		}
-		if (['hurricane', 'thunder', 'bleakwindstorm', 'wildboltstorm', 'sandsearstorm'].includes(move.id)) {
+		if (['hurricane', 'thunder', 'bleakwindstorm', 'wildboltstorm', 'sandsearstorm'].includes(move.id) || (move.id === 'springtidestorm' && this.battle.tier.includes("Eason"))) {
 			value.weatherModify(0, 'Rain Dance');
 			value.weatherModify(0, 'Primordial Sea');
 		}
@@ -1613,6 +1614,20 @@ class BattleTooltips {
 		} else if (value.tryAbility('Compound Eyes')) {
 			accuracyModifiers.push(5325);
 			value.abilityModify(1.3, "Compound Eyes");
+		}
+		if (this.battle.tier.includes("Eason")) {
+			if (value.tryAbility('Keen Eye') && move.accuracy !== 100) {
+				const KEmultiplier = 1 + (100 - move.accuracy) / 100;
+				const BKmultiplier = Math.floor(4096 * KEmultiplier);
+				accuracyModifiers.push(BKmultiplier);
+				value.abilityModify(KEmultiplier, "Keen Eye");
+			}
+			if (['bleakwindstorm', 'wildboltstorm', 'sandsearstorm', 'springtidestorm'].includes(move.id)) {
+				value.weatherModify(0, 'Sunny Day');
+				value.weatherModify(0, 'Desolate Land');
+				value.weatherModify(0, 'Sandstorm');
+				value.weatherModify(0, 'Snow');
+			}
 		}
 
 		if (value.tryItem('Wide Lens')) {
@@ -1719,7 +1734,9 @@ class BattleTooltips {
 			value.modify(2, move.name + ' + status');
 		}
 		if (move.id === 'lastrespects') {
-			value.set(Math.min(50 + 50 * pokemon.side.faintCounter));
+			const ogBP = this.battle.tier.includes("Eason Region") ? 60 : 50;
+			const addedBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
+			value.set(Math.min(ogBP + addedBP * pokemon.side.faintCounter));
 		}
 		if (move.id === 'punishment' && target) {
 			let boostCount = 0;
@@ -1787,6 +1804,15 @@ class BattleTooltips {
 			move.id === 'watershuriken' && pokemon.getSpeciesForme() === 'Greninja-Ash' && pokemon.ability === 'Battle Bond'
 		) {
 			value.set(20, 'Battle Bond');
+		}
+		if (this.battle.tier.includes("Eason")) {
+			if (move.id === 'sharpedge') {
+				let boostCount = 0;
+				for (const boost of Object.values(pokemon.boosts.atk)) {
+					if (boost > 0) boostCount += boost;
+				}
+				value.set(60 + 20 * boostCount);
+			}
 		}
 		// Moves that check opponent speed
 		if (move.id === 'electroball' && target) {
@@ -1859,10 +1885,10 @@ class BattleTooltips {
 			}
 		}
 		// Base power based on times hit
-		const ogBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
-		const addedBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
-		const maxBP = this.battle.tier.includes("Eason Region") ? 210 : 350;
 		if (move.id === 'ragefist') {
+			const ogBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
+			const addedBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
+			const maxBP = this.battle.tier.includes("Eason Region") ? 210 : 350;
 			value.set(Math.min(maxBP, ogBP + addedBP * pokemon.timesAttacked),
 				pokemon.timesAttacked > 0
 					? `Hit ${pokemon.timesAttacked} time${pokemon.timesAttacked > 1 ? 's' : ''}`
@@ -1877,7 +1903,7 @@ class BattleTooltips {
 		if (move.flags['punch']) {
 			value.abilityModify(1.2, 'Iron Fist');
 		}
-		if (move.flags['pulse']) {
+		if (move.flags['pulse'] && !this.battle.tier.includes("Eason")) {
 			value.abilityModify(1.5, "Mega Launcher");
 		}
 		if (move.flags['bite']) {
@@ -1903,6 +1929,15 @@ class BattleTooltips {
 		}
 		if (move.flags['slicing']) {
 			value.abilityModify(1.5, "Sharpness");
+		}
+		if (this.battle.tier.includes("Eason")) {
+			if (move.flags['bullet'] || move.flags['pulse']) {
+				value.abilityModify(1.5, "Mega Launcher");
+			}
+			if (move.accuracy !== 100) {
+				const diff = 100 - move.accuracy;
+				value.abilityModify(1 + diff / 100, "Keen Eye");
+			}
 		}
 		for (let i = 1; i <= 5 && i <= pokemon.side.faintCounter; i++) {
 			if (pokemon.volatiles[`fallen${i}`]) {
