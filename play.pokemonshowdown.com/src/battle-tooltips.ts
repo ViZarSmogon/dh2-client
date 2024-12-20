@@ -1141,6 +1141,12 @@ class BattleTooltips {
 					}
 				}
 			}
+			if (this.battle.tier.includes("Eason")) {
+				if ((ability === 'sandveil' && weather === 'sandstorm') || (ability === 'snowcloak' && weather === 'snow')) {
+					stats.def = Math.floor(stats.def * 1.25);
+					stats.spd = Math.floor(stats.spd * 1.25);
+				}
+			}
 		}
 		if (ability === 'defeatist' && serverPokemon.hp <= serverPokemon.maxhp / 2) {
 			stats.atk = Math.floor(stats.atk * 0.5);
@@ -1180,7 +1186,8 @@ class BattleTooltips {
 			stats.spd = Math.floor(stats.spd * 1.5);
 		}
 		if (ability === 'grasspelt' && this.battle.hasPseudoWeather('Grassy Terrain')) {
-			stats.def = Math.floor(stats.def * 1.5);
+			const multiplier = this.battle.tier.includes("Eason") ? 1.3 : 1.5;
+			stats.def = Math.floor(stats.def * multiplier);
 		}
 		if (this.battle.hasPseudoWeather('Electric Terrain')) {
 			if (ability === 'surgesurfer') {
@@ -1191,9 +1198,19 @@ class BattleTooltips {
 				stats.spa = Math.floor(stats.spa * multiplier);
 			}
 		}
-		if ((this.battle.hasPseudoWeather('Grassy Terrain') || this.battle.hasPseudoWeather('Misty Terrain') || this.battle.hasPseudoWeather('Psychic Terrain')) && this.battle.tier.includes("Eason Region")) {
-			if (ability === 'surgesurfer') {
-				speedModifiers.push(2);
+		if (this.battle.tier.includes("Eason Region")) {
+			if (this.battle.hasPseudoWeather('Grassy Terrain') || this.battle.hasPseudoWeather('Psychic Terrain')) {
+				if (ability === 'surgesurfer') {
+					speedModifiers.push(2);
+				}
+			}
+			if (this.battle.hasPseudoWeather('Misty Terrain')) {
+				if (ability === 'surgesurfer') {
+					speedModifiers.push(2);
+				}
+				if (ability === 'mistrush') {
+					speedModifiers.push(1.5);
+				}
 			}
 		}
 		if (item === 'choicespecs' && !clientPokemon?.volatiles['dynamax']) {
@@ -1736,9 +1753,7 @@ class BattleTooltips {
 			value.modify(2, move.name + ' + status');
 		}
 		if (move.id === 'lastrespects') {
-			const ogBP = this.battle.tier.includes("Eason Region") ? 60 : 50;
-			const addedBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
-			value.set(Math.min(ogBP + addedBP * pokemon.side.faintCounter));
+			value.set(Math.min(50 + 50 * pokemon.side.faintCounter));
 		}
 		if (move.id === 'punishment' && target) {
 			let boostCount = 0;
@@ -1890,7 +1905,7 @@ class BattleTooltips {
 		if (move.id === 'ragefist') {
 			const ogBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
 			const addedBP = this.battle.tier.includes("Eason Region") ? 30 : 50;
-			const maxBP = this.battle.tier.includes("Eason Region") ? 210 : 350;
+			const maxBP = this.battle.tier.includes("Eason Region") ? 150 : 350;
 			value.set(Math.min(maxBP, ogBP + addedBP * pokemon.timesAttacked),
 				pokemon.timesAttacked > 0
 					? `Hit ${pokemon.timesAttacked} time${pokemon.timesAttacked > 1 ? 's' : ''}`
@@ -1930,20 +1945,35 @@ class BattleTooltips {
 			value.abilityModify(1.3, "Punk Rock");
 		}
 		if (move.flags['slicing']) {
-			value.abilityModify(1.5, "Sharpness");
+			const multiplier = this.battle.tier.includes("Eason") ? 1.3 : 1.5;
+			value.abilityModify(multiplier, "Sharpness");
 		}
 		if (this.battle.tier.includes("Eason")) {
+			const typeModifiers = pokemon.hp <= pokemon.maxhp / 3 ? 1.5 : 1.1;
 			if (move.flags['bullet'] || move.flags['pulse']) {
-				value.abilityModify(1.5, "Mega Launcher");
+				value.abilityModify(1.3, "Mega Launcher");
 			}
 			if (move.accuracy !== 100) {
 				const diff = 100 - move.accuracy;
 				value.abilityModify(1 + diff / 100, "Keen Eye");
 			}
+			if (moveType === 'Bug') {
+				value.abilityModify(typeModifiers, "Swarm");
+			}
+			if (moveType === 'Fire') {
+				value.abilityModify(typeModifiers, "Blaze");
+			}
+			if (moveType === 'Grass') {
+				value.abilityModify(typeModifiers, "Overgrow");
+			}
+			if (moveType === 'Water') {
+				value.abilityModify(typeModifiers, "Torrent");
+			}
 		}
 		for (let i = 1; i <= 5 && i <= pokemon.side.faintCounter; i++) {
 			if (pokemon.volatiles[`fallen${i}`]) {
-				value.abilityModify(1 + 0.1 * i, "Supreme Overlord");
+				const multiplier = this.battle.tier.includes("Eason") ? 0.05 : 0.1;
+				value.abilityModify(1 + multiplier * i, "Supreme Overlord");
 			}
 		}
 		if (target) {
@@ -2193,8 +2223,18 @@ class BattleTooltips {
 
 		if (itemName === 'Muscle Band' && move.category === 'Physical' ||
 			itemName === 'Wise Glasses' && move.category === 'Special' ||
-			itemName === 'Punching Glove' && move.flags['punch']) {
+			(itemName === 'Punching Glove' && move.flags['punch'] && !this.battle.tier.includes("Eason"))) {
 			value.itemModify(1.1);
+		}
+		
+		if (this.battle.tier.includes("Eason")) {
+			if (itemName === 'Punching Glove' && move.flags['punch'] ||
+				itemName === 'Razor Fang' && move.flags['bite'] ||
+				itemName === 'Razor Claw' && move.flags['slicing'] ||
+				itemName === 'Quick Claw' && move.priority > 1
+			) {
+				value.itemModify(1.2);
+			}
 		}
 		return value;
 	}
