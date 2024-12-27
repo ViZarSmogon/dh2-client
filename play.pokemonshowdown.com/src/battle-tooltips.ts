@@ -1918,13 +1918,15 @@ class BattleTooltips {
 			value.abilityModify(1.5, "Flare Boost");
 		}
 		if (move.flags['punch']) {
-			value.abilityModify(1.2, 'Iron Fist');
+			const modifier = this.battle.tier.includes("Eason") ? 1.3 : 1.2;
+			value.abilityModify(modifier, 'Iron Fist');
 		}
 		if (move.flags['pulse'] && !this.battle.tier.includes("Eason")) {
 			value.abilityModify(1.5, "Mega Launcher");
 		}
 		if (move.flags['bite']) {
-			value.abilityModify(1.5, "Strong Jaw");
+			const modifier = this.battle.tier.includes("Eason") ? 1.3 : 1.5;
+			value.abilityModify(modifier, "Strong Jaw");
 		}
 		if (value.value <= 60) {
 			value.abilityModify(1.5, "Technician");
@@ -1969,6 +1971,15 @@ class BattleTooltips {
 			if (moveType === 'Water') {
 				value.abilityModify(typeModifiers, "Torrent");
 			}
+			if (moveType === 'Poison') {
+				value.abilityModify(typeModifiers, "Stench");
+			}
+			if (moveType === 'Electric') {
+				value.abilityModify(typeModifiers, "Transistor");
+			}
+			if (moveType === 'Dragon') {
+				value.abilityModify(typeModifiers, "Dragon's Maw");
+			}
 		}
 		for (let i = 1; i <= 5 && i <= pokemon.side.faintCounter; i++) {
 			if (pokemon.volatiles[`fallen${i}`]) {
@@ -2002,7 +2013,8 @@ class BattleTooltips {
 			}
 		}
 		if (move.recoil || move.hasCrashDamage) {
-			value.abilityModify(1.2, 'Reckless');
+			const modifier = this.battle.tier.includes("Eason") ? 1.3 : 1.2;
+			value.abilityModify(modifier, 'Reckless');
 		}
 
 		if (move.category !== 'Status') {
